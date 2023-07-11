@@ -1,12 +1,10 @@
 package net.mindoth.shadowizardlib;
 
-import net.mindoth.shadowizardlib.util.ThanksList;
-import net.minecraft.server.MinecraftServer;
+import net.mindoth.shadowizardlib.network.ShadowizardNetwork;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
@@ -19,13 +17,20 @@ public class ShadoWizardLib {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ShadoWizardLibClient.registerHandlers();
         }
-        IEventBus bus = MinecraftForge.EVENT_BUS;
-        bus.addListener((ServerAboutToStartEvent e) -> this.serverAboutToStart(e.getServer()));
+        addRegistries(modEventBus);
+        //IEventBus bus = MinecraftForge.EVENT_BUS;
+        //bus.addListener((ServerAboutToStartEvent e) -> this.serverAboutToStart(e.getServer()));
     }
-    private void serverAboutToStart(MinecraftServer server) {
+    private void addRegistries(final IEventBus modEventBus) {
+        modEventBus.addListener(this::commonSetup);
+    }
+    public void commonSetup(final FMLCommonSetupEvent event) {
+        ShadowizardNetwork.init();
+    }
+    /*private void serverAboutToStart(MinecraftServer server) {
 
         if (server.isDedicatedServer()) {
             ThanksList.firstStart();
         }
-    }
+    }*/
 }
