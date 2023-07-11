@@ -1,13 +1,10 @@
 package net.mindoth.shadowizardlib.util;
 
-import net.mindoth.shadowizardlib.network.ShadowizardNetwork;
-import net.mindoth.shadowizardlib.registries.KeyBinds;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 
@@ -29,23 +26,20 @@ public class ThanksList {
         CLOUD(() -> ParticleTypes.CLOUD),
         DMG_HEART(() -> ParticleTypes.DAMAGE_INDICATOR),
         DRAGON_BREATH(() -> ParticleTypes.DRAGON_BREATH),
-        ELECTRIC_SPARK(() -> ParticleTypes.ELECTRIC_SPARK),
         END_ROD(() -> ParticleTypes.END_ROD),
         FIRE(() -> ParticleTypes.FLAME),
         FIREWORK(() -> ParticleTypes.FIREWORK),
-        GLOW(() -> ParticleTypes.GLOW),
         GROWTH(() -> ParticleTypes.HAPPY_VILLAGER),
         HEART(() -> ParticleTypes.HEART),
-        SCULK_SOUL(() -> ParticleTypes.SCULK_SOUL),
         SLIME(() -> ParticleTypes.ITEM_SLIME),
         SNOW(() -> ParticleTypes.ITEM_SNOWBALL),
         SOUL(() -> ParticleTypes.SOUL),
         SOUL_FIRE(() -> ParticleTypes.SOUL_FIRE_FLAME),
         WITCH(() -> ParticleTypes.WITCH);
 
-        public final Supplier<ParticleOptions> type;
+        public final Supplier<IParticleData> type;
 
-        SupporterParticleType(Supplier<ParticleOptions> type) {
+        SupporterParticleType(Supplier<IParticleData> type) {
             this.type = type;
         }
     }
@@ -78,11 +72,11 @@ public class ThanksList {
     public static void clientTick(TickEvent.ClientTickEvent event) {
         SupporterParticleType t = null;
         if ( event.phase == TickEvent.Phase.END && Minecraft.getInstance().level != null ) {
-            for ( Player player : Minecraft.getInstance().level.players() ) {
+            for ( PlayerEntity player : Minecraft.getInstance().level.players() ) {
                 if ( !player.isInvisible() && player.tickCount * 3 % 2 == 0 && !DISABLED.contains(player.getUUID()) && (t = PARTICLES.get(player.getUUID())) != null ) {
-                    ClientLevel world = (ClientLevel) player.level;
-                    RandomSource rand = world.random;
-                    ParticleOptions type = t.type.get();
+                    ClientWorld world = (ClientWorld) player.level;
+                    Random rand = world.random;
+                    IParticleData type = t.type.get();
                     world.addParticle(type, player.getX() + rand.nextDouble() * 0.4 - 0.2, player.getY() + 0.1, player.getZ() + rand.nextDouble() * 0.4 - 0.2, 0, 0, 0);
                 }
             }

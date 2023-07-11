@@ -1,10 +1,8 @@
 package net.mindoth.shadowizardlib.network;
 
 import net.mindoth.shadowizardlib.util.ThanksList;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.Set;
 import java.util.UUID;
@@ -21,11 +19,11 @@ public class SupporterDisableMessage {
         this.id = id;
     }
 
-    public static void encode(SupporterDisableMessage message, FriendlyByteBuf buffer) {
+    public static void encode(SupporterDisableMessage message, PacketBuffer buffer) {
         if (message.id != null) buffer.writeUUID(message.id);
     }
 
-    public static SupporterDisableMessage decode(FriendlyByteBuf buffer) {
+    public static SupporterDisableMessage decode(PacketBuffer buffer) {
         return new SupporterDisableMessage(buffer.readUUID());
     }
 

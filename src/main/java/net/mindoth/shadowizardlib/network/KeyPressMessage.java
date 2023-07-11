@@ -1,12 +1,11 @@
 package net.mindoth.shadowizardlib.network;
 
 import net.mindoth.shadowizardlib.util.ThanksList;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import java.util.Set;
 import java.util.UUID;
@@ -22,11 +21,11 @@ public class KeyPressMessage {
         this.key = key;
     }
 
-    public static void encode(KeyPressMessage message, FriendlyByteBuf buffer) {
+    public static void encode(KeyPressMessage message, PacketBuffer buffer) {
         buffer.writeInt(message.key);
     }
 
-    public static KeyPressMessage decode(FriendlyByteBuf buffer) {
+    public static KeyPressMessage decode(PacketBuffer buffer) {
         return new KeyPressMessage(buffer.readInt());
     }
 

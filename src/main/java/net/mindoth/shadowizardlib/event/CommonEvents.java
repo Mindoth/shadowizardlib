@@ -1,15 +1,15 @@
 package net.mindoth.shadowizardlib.event;
 
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 
 public class CommonEvents {
 
     //Pass any LivingEntity into this and you get its hitbox' centre
-    public static Vec3 getEntityCenter(LivingEntity entity) {
+    public static Vector3d getEntityCenter(LivingEntity entity) {
         return entity.getBoundingBox().getCenter();
     }
 
