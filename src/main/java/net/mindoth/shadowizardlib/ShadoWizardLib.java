@@ -18,8 +18,6 @@ public class ShadoWizardLib {
             ShadoWizardLibClient.registerHandlers();
         }
         addRegistries(modEventBus);
-        //IEventBus bus = MinecraftForge.EVENT_BUS;
-        //bus.addListener((ServerAboutToStartEvent e) -> this.serverAboutToStart(e.getServer()));
     }
     private void addRegistries(final IEventBus modEventBus) {
         modEventBus.addListener(this::commonSetup);
@@ -27,10 +25,4 @@ public class ShadoWizardLib {
     public void commonSetup(final FMLCommonSetupEvent event) {
         ShadowizardNetwork.init();
     }
-    /*private void serverAboutToStart(MinecraftServer server) {
-
-        if (server.isDedicatedServer()) {
-            ThanksList.firstStart();
-        }
-    }*/
 }
