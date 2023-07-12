@@ -14,16 +14,14 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class ShadoWizardLibClient {
 
     public static void registerHandlers() {
-        ThanksList.init();
-        MinecraftForge.EVENT_BUS.addListener(ShadoWizardLibClient::tick);
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modBus.addListener(ShadoWizardLibClient::clientSetup);
     }
 
-    @Mod.EventBusSubscriber(modid = ShadoWizardLib.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientForgeEvents {
-        @SubscribeEvent
-        public static void clientSetup(FMLClientSetupEvent event) {
-            KeyBinds.register(event);
-        }
+    private static void clientSetup(final FMLClientSetupEvent event) {
+        KeyBinds.register(event);
+        MinecraftForge.EVENT_BUS.addListener(ShadoWizardLibClient::tick);
+        ThanksList.init();
     }
 
     public static long ticks = 0;

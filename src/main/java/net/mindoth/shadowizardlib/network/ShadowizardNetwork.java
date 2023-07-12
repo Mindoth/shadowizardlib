@@ -13,7 +13,6 @@ public class ShadowizardNetwork {
             version -> version.equals(NETWORK_VERSION), version -> version.equals(NETWORK_VERSION));
 
     public static void init() {
-        CHANNEL.registerMessage(0, KeyPressMessage.class, KeyPressMessage::encode, KeyPressMessage::decode, KeyPressMessage::handle);
-        CHANNEL.registerMessage(1, SupporterDisableMessage.class, SupporterDisableMessage::encode, SupporterDisableMessage::decode, SupporterDisableMessage::handle);
+        MessageHelper.registerMessage(CHANNEL, 0, new SupporterDisableMessage(0));
     }
 }
