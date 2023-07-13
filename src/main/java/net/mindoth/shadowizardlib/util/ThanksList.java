@@ -1,5 +1,6 @@
 package net.mindoth.shadowizardlib.util;
 
+import net.mindoth.shadowizardlib.network.PacketDistro;
 import net.mindoth.shadowizardlib.network.ShadowizardNetwork;
 import net.mindoth.shadowizardlib.network.SupporterDisableMessage;
 import net.mindoth.shadowizardlib.registries.KeyBinds;
@@ -10,6 +11,7 @@ import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -68,7 +70,10 @@ public class ThanksList {
             catch (Exception k) {
                 //not possible
             }
-            if (PARTICLES.size() > 0) MinecraftForge.EVENT_BUS.addListener(ThanksList::clientTick);
+            if (PARTICLES.size() > 0) {
+                MinecraftForge.EVENT_BUS.addListener(ThanksList::clientTick);
+                MinecraftForge.EVENT_BUS.addListener(ThanksList::onClientJoin);
+            }
         }, "ShadowizardLib Supporter Effect Loader").start();
     }
 
@@ -84,6 +89,14 @@ public class ThanksList {
                     world.addParticle(type, player.getX() + rand.nextDouble() * 0.4 - 0.2, player.getY() + 0.1, player.getZ() + rand.nextDouble() * 0.4 - 0.2, 0, 0, 0);
                 }
             }
+        }
+    }
+
+    public static void onClientJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        if ( (PARTICLES.get(event.getEntity().getUUID())) != null ) {
+            DISABLED.remove(event.getEntity().getUUID());
+            PacketDistro.sendTo(ShadowizardNetwork.CHANNEL, new SupporterDisableMessage(1, event.getEntity().getUUID()), event.getPlayer());
+            PacketDistro.sendToAll(ShadowizardNetwork.CHANNEL, new SupporterDisableMessage(1, event.getEntity().getUUID()));
         }
     }
 }
