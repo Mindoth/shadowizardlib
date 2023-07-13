@@ -45,7 +45,6 @@ public class SupporterDisableMessage implements MessageProvider<SupporterDisable
     @Override
     public void handle(SupporterDisableMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
         if ( contextSupplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER ) {
-            //PacketDistro.sendToAll(ShadowizardNetwork.CHANNEL, new SupporterDisableMessage(message.type, contextSupplier.get().getSender().getUUID()));
             MessageHelper.handlePacket(() -> () -> {
                 PacketDistro.sendToAll(ShadowizardNetwork.CHANNEL, new SupporterDisableMessage(message.type, contextSupplier.get().getSender().getUUID()));
             }, contextSupplier);
@@ -53,10 +52,10 @@ public class SupporterDisableMessage implements MessageProvider<SupporterDisable
         else {
             MessageHelper.handlePacket(() -> () -> {
                 Set<UUID> set = ThanksList.DISABLED;
-                if ( set.contains(message.id) ) {
+                if ( set.contains(message.id) || (set.contains(message.id) && message.type == 1) ) {
                     set.remove(message.id);
                 }
-                else {
+                else if ( message.type == 0 ) {
                     set.add(message.id);
                 }
             }, contextSupplier);
