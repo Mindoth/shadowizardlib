@@ -9,16 +9,26 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 public class ArmorModel <T extends LivingEntity> extends HumanoidModel<T> implements IClientItemExtensions {
-    public EquipmentSlot slot;
-    ModelPart root, modelHead, modelBody, modelLeft_arm, modelRight_arm, modelBelt, modelLeft_leg, modelRight_leg, modelLeft_foot, modelRight_foot;
+    public ArmorItem.Type slot;
+    ModelPart root;
+    ModelPart modelHead;
+    ModelPart modelBody;
+    ModelPart modelLeft_arm;
+    ModelPart modelRight_arm;
+    ModelPart modelBelt;
+    ModelPart modelLeft_leg;
+    ModelPart modelRight_leg;
+    ModelPart modelLeft_foot;
+    ModelPart modelRight_foot;
 
-    public ArmorModel(ModelPart root) {
+    public ArmorModel(ModelPart root, ArmorItem.Type slot) {
         super(root);
+        this.slot = slot;
         this.root = root;
         this.modelBelt = root.getChild("Belt");
         this.modelBody = root.getChild("Body");
@@ -47,51 +57,46 @@ public class ArmorModel <T extends LivingEntity> extends HumanoidModel<T> implem
         return root;
     }
 
-    @Override
     protected Iterable<ModelPart> headParts() {
-        return slot == EquipmentSlot.HEAD ? ImmutableList.of(modelHead) : ImmutableList.of();
+        return this.slot == ArmorItem.Type.HELMET ? ImmutableList.of(this.modelHead) : ImmutableList.of();
     }
 
-    @Override
     protected Iterable<ModelPart> bodyParts() {
-        if (slot == EquipmentSlot.CHEST) {
-            return ImmutableList.<ModelPart>of(modelBody, modelLeft_arm, modelRight_arm);
-        } else if (slot == EquipmentSlot.LEGS) {
-            return ImmutableList.<ModelPart>of(modelLeft_leg, modelRight_leg, modelBelt);
-        } else if (slot == EquipmentSlot.FEET) {
-            return ImmutableList.<ModelPart>of(modelLeft_foot, modelRight_foot);
-        } else return ImmutableList.of();
+        if (this.slot == ArmorItem.Type.HELMET) {
+            return ImmutableList.of(this.modelBody, this.modelLeft_arm, this.modelRight_arm);
+        } else if (this.slot == ArmorItem.Type.LEGGINGS) {
+            return ImmutableList.of(this.modelLeft_leg, this.modelRight_leg, this.modelBelt);
+        } else {
+            return this.slot == ArmorItem.Type.BOOTS ? ImmutableList.of(this.modelLeft_foot, this.modelRight_foot) : ImmutableList.of();
+        }
     }
 
-    @Override
     public void renderToBuffer(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-//        super.renderToBuffer(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         matrixStack.pushPose();
-        if (this.slot == EquipmentSlot.HEAD) {
+        if (this.slot == ArmorItem.Type.HELMET) {
             this.modelHead.copyFrom(this.head);
             this.modelHead.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        } else if (this.slot == EquipmentSlot.CHEST) {
+        } else if (this.slot == ArmorItem.Type.CHESTPLATE) {
             this.modelBody.copyFrom(this.body);
             this.modelBody.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             this.modelRight_arm.copyFrom(this.rightArm);
             this.modelRight_arm.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             this.modelLeft_arm.copyFrom(this.leftArm);
             this.modelLeft_arm.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-
-        } else if (this.slot == EquipmentSlot.LEGS) {
+        } else if (this.slot == ArmorItem.Type.LEGGINGS) {
             this.modelBelt.copyFrom(this.body);
             this.modelBelt.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             this.modelRight_leg.copyFrom(this.rightLeg);
             this.modelRight_leg.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             this.modelLeft_leg.copyFrom(this.leftLeg);
             this.modelLeft_leg.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-
-        } else if (this.slot == EquipmentSlot.FEET) {
+        } else if (this.slot == ArmorItem.Type.BOOTS) {
             this.modelRight_foot.copyFrom(this.rightLeg);
             this.modelRight_foot.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             this.modelLeft_foot.copyFrom(this.leftLeg);
             this.modelLeft_foot.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         }
+
         matrixStack.popPose();
     }
 
