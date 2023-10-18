@@ -23,7 +23,7 @@ public class CommonEvents {
     }
 
     //Pass an iten attribute and the uuid for said attribute and it will be removed. Usually used inside ItemAttributeModifierEvent for changing attack damage/speed of item
-    private static void findAndRemoveVanillaModifier(ItemAttributeModifierEvent event, Attribute attribute, UUID baseUUID) {
+    public static void findAndRemoveVanillaModifier(ItemAttributeModifierEvent event, Attribute attribute, UUID baseUUID) {
         event.getOriginalModifiers()
                 .get(attribute)
                 .stream()
