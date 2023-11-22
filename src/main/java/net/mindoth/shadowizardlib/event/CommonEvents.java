@@ -2,6 +2,7 @@ package net.mindoth.shadowizardlib.event;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -26,13 +27,8 @@ public class CommonEvents {
         return targets;
     }
 
-<<<<<<< Updated upstream
-    //Pass an iten attribute and the uuid for said attribute and it will be removed. Usually used inside ItemAttributeModifierEvent for changing attack damage/speed of item
-    private static void findAndRemoveVanillaModifier(ItemAttributeModifierEvent event, Attribute attribute, UUID baseUUID) {
-=======
     //Pass an item attribute and the uuid for said attribute, and it will be removed. Usually used inside ItemAttributeModifierEvent for changing attack damage/speed of item
     public static void findAndRemoveVanillaModifier(ItemAttributeModifierEvent event, Attribute attribute, UUID baseUUID) {
->>>>>>> Stashed changes
         event.getOriginalModifiers()
                 .get(attribute)
                 .stream()
@@ -109,7 +105,7 @@ public class CommonEvents {
         return returnEntity;
     }
 
-    private static Vec3 calculateViewVector(float pXRot, float pYRot) {
+    public static Vec3 calculateViewVector(float pXRot, float pYRot) {
         float f = pXRot * ((float)Math.PI / 180F);
         float f1 = -pYRot * ((float)Math.PI / 180F);
         float f2 = Mth.cos(f1);
