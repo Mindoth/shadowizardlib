@@ -26,7 +26,7 @@ public class ShadoWizardLibClient {
 
     public static long ticks = 0;
     public static void tick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
+        if ( event.phase == TickEvent.Phase.END ) {
             ticks++;
         }
     }

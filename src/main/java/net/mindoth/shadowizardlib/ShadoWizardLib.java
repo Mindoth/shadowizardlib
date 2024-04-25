@@ -14,7 +14,7 @@ public class ShadoWizardLib {
 
     public ShadoWizardLib() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        if ( FMLEnvironment.dist == Dist.CLIENT ) {
             ShadoWizardLibClient.registerHandlers();
         }
         addRegistries(modEventBus);
