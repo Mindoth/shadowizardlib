@@ -10,6 +10,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,15 +39,15 @@ public class ShadowEvents {
     }
 
     //Get an arraylist of LivingEntities around the given entity. Pass the centerpoint entity and size its' boundingbox will be extended
-    public static ArrayList<LivingEntity> getEntitiesAround(Entity caster, World pLevel, double size) {
+    public static ArrayList<LivingEntity> getEntitiesAround(Entity caster, World pLevel, double size, @Nullable List<LivingEntity> exceptions) {
         ArrayList<LivingEntity> targets = (ArrayList<LivingEntity>) pLevel.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(size));
-        targets.removeIf(entry -> entry == caster || !(entry.isAttackable()) || !(entry.isAlive() || (entry instanceof PlayerEntity && ((PlayerEntity)entry).abilities.instabuild)));
+        if ( exceptions != null && !exceptions.isEmpty() ) targets.removeIf(exceptions::contains);
         return targets;
     }
 
     //Get nearest LivingEntity to given entity
-    public static Entity getNearestEntity(Entity player, World pLevel, double size) {
-        ArrayList<LivingEntity> targets = getEntitiesAround(player, pLevel, size);
+    public static Entity getNearestEntity(Entity player, World pLevel, double size, @Nullable List<LivingEntity> exceptions) {
+        ArrayList<LivingEntity> targets = getEntitiesAround(player, pLevel, size, exceptions);
         LivingEntity target = null;
         double lowestSoFar = Double.MAX_VALUE;
         for ( LivingEntity closestSoFar : targets ) {
