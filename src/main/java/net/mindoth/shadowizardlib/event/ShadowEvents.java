@@ -135,10 +135,10 @@ public class ShadowEvents {
 
         Vector3d direction = ShadowEvents.calculateViewVector(caster.xRot * (float)adjuster, caster.yRot * (float)adjuster).normalize();
         direction = direction.multiply((double)range, (double)range, (double)range);
-        Vector3d center = caster.getEyePosition(0.0F).add(direction);
+        Vector3d center = caster.getEyePosition(1.0F).add(direction);
         Vector3d returnPoint = center;
         double playerX = ShadowEvents.getEntityCenter(caster).x;
-        double playerY = ShadowEvents.getEntityCenter(caster).y;
+        double playerY = caster.getEyePosition(1.0F).y;
         double playerZ = ShadowEvents.getEntityCenter(caster).z;
         double listedEntityX = center.x();
         double listedEntityY = center.y();
@@ -146,9 +146,10 @@ public class ShadowEvents {
         int particleInterval = (int)Math.round(caster.distanceToSqr(center));
 
         for ( int k = 1; k < 1 + particleInterval; ++k ) {
-            double lineX = playerX * (1.0 - (double)k / (double)particleInterval) + listedEntityX * ((double)k / (double)particleInterval);
-            double lineY = playerY * (1.0 - (double)k / (double)particleInterval) + listedEntityY * ((double)k / (double)particleInterval);
-            double lineZ = playerZ * (1.0 - (double)k / (double)particleInterval) + listedEntityZ * ((double)k / (double)particleInterval);
+            double lineX = playerX * (1.0D - (double)k / (double)particleInterval) + listedEntityX * ((double)k / (double)particleInterval);
+            double lineY = playerY * (1.0D - (double)k / (double)particleInterval) + listedEntityY * ((double)k / (double)particleInterval);
+            double lineZ = playerZ * (1.0D - (double)k / (double)particleInterval) + listedEntityZ * ((double)k / (double)particleInterval);
+            //((ServerWorld)level).sendParticles(ParticleTypes.FLAME, lineX, lineY, lineZ, 0, 0, 0, 0, 0);
             Vector3d start = new Vector3d(lineX + error, lineY + error, lineZ + error);
             Vector3d end = new Vector3d(lineX - error, lineY - error, lineZ - error);
             AxisAlignedBB area = new AxisAlignedBB(start, end);
@@ -156,7 +157,7 @@ public class ShadowEvents {
             Entity target = null;
             double lowestSoFar = Double.MAX_VALUE;
             for ( Entity closestSoFar : targets ) {
-                if ( closestSoFar instanceof LivingEntity ) {
+                if ( closestSoFar instanceof LivingEntity) {
                     double testDistance = closestSoFar.distanceToSqr(center);
                     if ( testDistance < lowestSoFar ) {
                         target = closestSoFar;
@@ -166,18 +167,22 @@ public class ShadowEvents {
             if ( stopsAtEntity && target != null ) {
                 if ( centerBlock ) {
                     BlockPos pos = new BlockPos((int)returnPoint.x, (int)returnPoint.y, (int)returnPoint.z);
-                    returnPoint = new Vector3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+                    double multX = pos.getX() < 0 ? -1 : 1;
+                    double multZ = pos.getZ() < 0 ? -1 : 1;
+                    returnPoint = new Vector3d(pos.getX() + (0.5D * multX), pos.getY() + 0.5D, pos.getZ() + (0.5D * multZ));
                 }
                 break;
             }
             if ( stopsAtSolid && caster.level.getBlockState(new BlockPos(lineX, lineY, lineZ)).getMaterial().isSolid() ) {
                 if ( centerBlock ) {
                     BlockPos pos = new BlockPos((int)returnPoint.x, (int)returnPoint.y, (int)returnPoint.z);
-                    returnPoint = new Vector3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+                    double multX = pos.getX() < 0 ? -1 : 1;
+                    double multZ = pos.getZ() < 0 ? -1 : 1;
+                    returnPoint = new Vector3d(pos.getX() + (0.5D * multX), pos.getY() + 0.5D, pos.getZ() + (0.5D * multZ));
                 }
                 break;
             }
-            returnPoint = new Vector3d(lineX - (double)error, lineY - (double)error, lineZ - (double)error);
+            returnPoint = new Vector3d(lineX, lineY, lineZ);
         }
         return returnPoint;
     }
