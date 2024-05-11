@@ -46,13 +46,13 @@ public class ShadowEvents {
     }
 
     //Get nearest LivingEntity to given entity
-    public static Entity getNearestEntity(Entity player, World pLevel, double size, @Nullable List<LivingEntity> exceptions) {
-        ArrayList<LivingEntity> targets = getEntitiesAround(player, pLevel, size, exceptions);
+    public static Entity getNearestEntity(Entity caster, World pLevel, double size, @Nullable List<LivingEntity> exceptions) {
+        ArrayList<LivingEntity> targets = getEntitiesAround(caster, pLevel, size, exceptions);
         LivingEntity target = null;
         double lowestSoFar = Double.MAX_VALUE;
         for ( LivingEntity closestSoFar : targets ) {
-            if ( !closestSoFar.isAlliedTo(player) ) {
-                double testDistance = player.distanceTo(closestSoFar);
+            if ( !closestSoFar.isAlliedTo(caster) ) {
+                double testDistance = caster.distanceTo(closestSoFar);
                 if ( testDistance < lowestSoFar ) {
                     target = closestSoFar;
                 }
@@ -63,9 +63,9 @@ public class ShadowEvents {
 
     //Custom method for getting a LivingEntity the player is looking at. If no target is found returns caster itself
     //Range is the distance entities are taken into account
-    //Error is the distance the player's crosshair can be from target and still be recognised as "looking at it"
+    //Error is the distance the player's crosshair can be from target and still be considered as "looking at it"
     //Technically "caster" can be any entity but using a Player is recommended
-    public static Entity getPointedEntity(World level, Entity caster, float range, float error, boolean isPlayer) {
+    public static Entity getPointedEntity(World level, Entity caster, float range, float error, boolean isPlayer, boolean stopsAtSolid) {
         int adjuster = 1;
         if ( !isPlayer ) adjuster = -1;
         Vector3d direction = calculateViewVector(caster.xRot * adjuster, caster.yRot * adjuster).normalize();
@@ -102,6 +102,7 @@ public class ShadowEvents {
                 returnEntity = target;
                 break;
             }
+            if ( stopsAtSolid && caster.level.getBlockState(new BlockPos(lineX, lineY, lineZ)).getMaterial().isSolid() ) break;
         }
         return returnEntity;
     }
@@ -116,8 +117,8 @@ public class ShadowEvents {
         return new Vector3d((double)(f3 * f4), (double)(-f5), (double)(f2 * f4));
     }
 
-    public static double blockHeight(World level, Entity caster, float range, float error, int maxHeight) {
-        BlockPos startPos = ShadowEvents.getPointedEntity(level, caster, range, error, true).blockPosition();
+    public static double blockHeight(World level, Entity caster, float range, float error, int maxHeight, boolean stopsAtSolid) {
+        BlockPos startPos = ShadowEvents.getPointedEntity(level, caster, range, error, true, stopsAtSolid).blockPosition();
         double returnHeight = startPos.getY();
         for ( int i = startPos.getY() + 1; i < (startPos.getY() + maxHeight); i++ ) {
             BlockPos testBlockPost = new BlockPos(startPos.getX(), i, startPos.getZ());
@@ -129,6 +130,7 @@ public class ShadowEvents {
         return returnHeight;
     }
 
+    //Custom ray-tracing method
     public static Vector3d getPoint(World level, Entity caster, float range, float error, boolean isPlayer, boolean centerBlock, boolean stopsAtEntity, boolean stopsAtSolid) {
         int adjuster = 1;
         if ( !isPlayer ) adjuster = -1;
