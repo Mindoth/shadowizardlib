@@ -57,9 +57,9 @@ public class ThanksList {
         new Thread(() -> {
             try {
                 URL url = new URL("https://raw.githubusercontent.com/Mindoth/shadowizardlib/main/thanks.txt");
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
+                try ( BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream())) ) {
                     String s;
-                    while ((s = reader.readLine()) != null) {
+                    while ( (s = reader.readLine()) != null ) {
                         String[] split = s.split(" ", 2);
                         if (split.length != 2) {
                             continue;
@@ -67,14 +67,14 @@ public class ThanksList {
                         PARTICLES.put(UUID.fromString(split[0]), SupporterParticleType.valueOf(split[1]));
                     }
                 }
-                catch (IOException exception) {
+                catch ( IOException exception ) {
                     exception.printStackTrace();
                 }
             }
-            catch (Exception k) {
+            catch ( Exception k ) {
                 //not possible
             }
-            if (PARTICLES.size() > 0) {
+            if ( PARTICLES.size() > 0 ) {
                 MinecraftForge.EVENT_BUS.addListener(ThanksList::clientTick);
                 MinecraftForge.EVENT_BUS.addListener(ThanksList::onClientJoin);
             }
