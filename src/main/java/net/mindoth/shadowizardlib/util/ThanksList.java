@@ -41,6 +41,7 @@ public class ThanksList {
         HEART(() -> ParticleTypes.HEART),
         SCULK_SOUL(() -> ParticleTypes.SCULK_SOUL),
         SLIME(() -> ParticleTypes.ITEM_SLIME),
+        SNEEZE(() -> ParticleTypes.SNEEZE),
         SNOW(() -> ParticleTypes.ITEM_SNOWBALL),
         SOUL(() -> ParticleTypes.SOUL),
         SOUL_FIRE(() -> ParticleTypes.SOUL_FIRE_FLAME),
@@ -72,7 +73,7 @@ public class ThanksList {
                 }
             }
             catch ( Exception k ) {
-                //not possible
+                //Not possible
             }
             if ( PARTICLES.size() > 0 ) {
                 MinecraftForge.EVENT_BUS.addListener(ThanksList::clientTick);

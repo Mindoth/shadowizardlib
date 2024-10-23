@@ -1,10 +1,14 @@
 package net.mindoth.shadowizardlib.event;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
@@ -50,12 +54,8 @@ public class ShadowEvents {
         LivingEntity target = null;
         double lowestSoFar = Double.MAX_VALUE;
         for ( LivingEntity closestSoFar : targets ) {
-            if ( !closestSoFar.isAlliedTo(caster) ) {
-                double testDistance = caster.distanceTo(closestSoFar);
-                if ( testDistance < lowestSoFar ) {
-                    target = closestSoFar;
-                }
-            }
+            double testDistance = caster.distanceTo(closestSoFar);
+            if ( testDistance < lowestSoFar ) target = closestSoFar;
         }
         return target;
     }
@@ -82,7 +82,7 @@ public class ShadowEvents {
             double lineX = playerX * (1 - ((double) k / particleInterval)) + listedEntityX * ((double) k / particleInterval);
             double lineY = playerY * (1 - ((double) k / particleInterval)) + listedEntityY * ((double) k / particleInterval);
             double lineZ = playerZ * (1 - ((double) k / particleInterval)) + listedEntityZ * ((double) k / particleInterval);
-            //float error = 0.25F;
+            //((ServerLevel)level).sendParticles(ParticleTypes.FLAME, lineX, lineY, lineZ, 0, 0, 0, 0, 0);
             Vec3 start = new Vec3(lineX + error, lineY + error, lineZ + error);
             Vec3 end = new Vec3(lineX - error, lineY - error, lineZ - error);
             AABB area = new AABB(start, end);
@@ -92,16 +92,14 @@ public class ShadowEvents {
             for ( Entity closestSoFar : targets ) {
                 if ( closestSoFar instanceof LivingEntity ) {
                     double testDistance = closestSoFar.distanceToSqr(center);
-                    if ( testDistance < lowestSoFar ) {
-                        target = closestSoFar;
-                    }
+                    if ( testDistance < lowestSoFar ) target = closestSoFar;
                 }
             }
             if ( target != null ) {
                 returnEntity = target;
                 break;
             }
-            if ( stopsAtSolid && caster.level().getBlockState(new BlockPos((int)lineX, (int)lineY, (int)lineZ)).isSolid() ) break;
+            if ( stopsAtSolid && caster.level().getBlockState(new BlockPos(Mth.floor(lineX), Mth.floor(lineY), Mth.floor(lineZ))).isSolid() ) break;
         }
         return returnEntity;
     }
@@ -130,7 +128,7 @@ public class ShadowEvents {
     }
 
     //Custom ray-tracing method
-    public static Vec3 getPoint(Level level, Entity caster, float range, float error, boolean isPlayer, boolean centerBlock, boolean stopsAtEntity, boolean stopsAtSolid) {
+    public static Vec3 getPoint(Level level, Entity caster, float range, float error, boolean isPlayer, boolean centerBlock, boolean stopsAtEntity, boolean stopsAtSolid, boolean stopsAtLiquid) {
         int adjuster = 1;
         if ( !isPlayer ) adjuster = -1;
 
@@ -145,12 +143,11 @@ public class ShadowEvents {
         double listedEntityY = center.y();
         double listedEntityZ = center.z();
         int particleInterval = (int)Math.round(caster.distanceToSqr(center));
-
         for ( int k = 1; k < 1 + particleInterval; ++k ) {
             double lineX = playerX * (1.0D - (double)k / (double)particleInterval) + listedEntityX * ((double)k / (double)particleInterval);
             double lineY = playerY * (1.0D - (double)k / (double)particleInterval) + listedEntityY * ((double)k / (double)particleInterval);
             double lineZ = playerZ * (1.0D - (double)k / (double)particleInterval) + listedEntityZ * ((double)k / (double)particleInterval);
-            //((ServerWorld)level).sendParticles(ParticleTypes.FLAME, lineX, lineY, lineZ, 0, 0, 0, 0, 0);
+            //((ServerLevel)level).sendParticles(ParticleTypes.FLAME, lineX, lineY, lineZ, 0, 0, 0, 0, 0);
             Vec3 start = new Vec3(lineX + error, lineY + error, lineZ + error);
             Vec3 end = new Vec3(lineX - error, lineY - error, lineZ - error);
             AABB area = new AABB(start, end);
@@ -160,31 +157,81 @@ public class ShadowEvents {
             for ( Entity closestSoFar : targets ) {
                 if ( closestSoFar instanceof LivingEntity) {
                     double testDistance = closestSoFar.distanceToSqr(center);
-                    if ( testDistance < lowestSoFar ) {
-                        target = closestSoFar;
-                    }
+                    if ( testDistance < lowestSoFar ) target = closestSoFar;
                 }
             }
             if ( stopsAtEntity && target != null ) {
                 if ( centerBlock ) {
-                    BlockPos pos = new BlockPos((int)returnPoint.x, (int)returnPoint.y, (int)returnPoint.z);
-                    double multX = pos.getX() < 0 ? -1 : 1;
-                    double multZ = pos.getZ() < 0 ? -1 : 1;
-                    returnPoint = new Vec3(pos.getX() + (0.5D * multX), pos.getY() + 0.5D, pos.getZ() + (0.5D * multZ));
+                    BlockPos pos = target.blockPosition();
+                    returnPoint = pos.getCenter();
                 }
                 break;
             }
-            if ( stopsAtSolid && caster.level().getBlockState(new BlockPos((int)lineX, (int)lineY, (int)lineZ)).isSolid() ) {
+            if ( stopsAtLiquid && level.getBlockState(new BlockPos(Mth.floor(lineX), Mth.floor(lineY), Mth.floor(lineZ))).getBlock() instanceof LiquidBlock ) {
                 if ( centerBlock ) {
-                    BlockPos pos = new BlockPos((int)returnPoint.x, (int)returnPoint.y, (int)returnPoint.z);
-                    double multX = pos.getX() < 0 ? -1 : 1;
-                    double multZ = pos.getZ() < 0 ? -1 : 1;
-                    returnPoint = new Vec3(pos.getX() + (0.5D * multX), pos.getY() + 0.5D, pos.getZ() + (0.5D * multZ));
+                    BlockPos pos = new BlockPos(Mth.floor(returnPoint.x), Mth.floor(returnPoint.y), Mth.floor(returnPoint.z));
+                    returnPoint = pos.getCenter();
+                }
+                break;
+            }
+            if ( stopsAtSolid && level.getBlockState(new BlockPos(Mth.floor(lineX), Mth.floor(lineY), Mth.floor(lineZ))).isSolid() ) {
+                if ( centerBlock ) {
+                    BlockPos pos = new BlockPos(Mth.floor(returnPoint.x), Mth.floor(returnPoint.y), Mth.floor(returnPoint.z));
+                    returnPoint = pos.getCenter();
                 }
                 break;
             }
             returnPoint = new Vec3(lineX, lineY, lineZ);
         }
         return returnPoint;
+    }
+
+    //Use this instead if you need the blockpos of a block you're looking at
+    public static BlockPos getBlockPoint(Entity caster, float range, boolean isPlayer) {
+        int adjuster = 1;
+        if ( !isPlayer ) adjuster = -1;
+
+        Vec3 direction = ShadowEvents.calculateViewVector(caster.getXRot() * (float)adjuster, caster.getYRot() * (float)adjuster).normalize();
+        direction = direction.multiply(range, range, range);
+        Vec3 center = caster.getEyePosition().add(direction);
+        double playerX = caster.getEyePosition().x;
+        double playerY = caster.getEyePosition().y;
+        double playerZ = caster.getEyePosition().z;
+        double listedEntityX = center.x();
+        double listedEntityY = center.y();
+        double listedEntityZ = center.z();
+        int particleInterval = (int)Math.round(caster.distanceToSqr(center));
+
+        BlockPos blockPos = new BlockPos(Mth.floor(center.x), Mth.floor(center.y), Mth.floor(center.z));
+        for ( int k = 1; k < 1 + particleInterval; ++k ) {
+            double lineX = playerX * (1.0 - (double)k / (double)particleInterval) + listedEntityX * ((double)k / (double)particleInterval);
+            double lineY = playerY * (1.0 - (double)k / (double)particleInterval) + listedEntityY * ((double)k / (double)particleInterval);
+            double lineZ = playerZ * (1.0 - (double)k / (double)particleInterval) + listedEntityZ * ((double)k / (double)particleInterval);
+
+            BlockPos tempPos = new BlockPos(Mth.floor(lineX), Mth.floor(lineY), Mth.floor(lineZ));
+            if ( caster.level().getBlockState(tempPos).isSolid() ) {
+                blockPos = tempPos;
+                break;
+            }
+        }
+        return blockPos;
+    }
+
+    //Draws a line of particles between the given caster and targetPos
+    public static void summonParticleLine(SimpleParticleType type, Entity caster, Vec3 casterPos, Vec3 targetPos, int count, double xOff, double yOff, double zOff, double speed) {
+        double playerX = casterPos.x;
+        double playerY = casterPos.y;
+        double playerZ = casterPos.z;
+        double listedEntityX = targetPos.x;
+        double listedEntityY = targetPos.y;
+        double listedEntityZ = targetPos.z;
+        int particleInterval = (int)Math.round(caster.distanceToSqr(targetPos));
+        ServerLevel level = (ServerLevel)caster.level();
+        for ( int k = 1; k < (1 + particleInterval); k++ ) {
+            double lineX = playerX * (1 - ((double) k / particleInterval)) + listedEntityX * ((double) k / particleInterval);
+            double lineY = playerY * (1 - ((double) k / particleInterval)) + listedEntityY * ((double) k / particleInterval);
+            double lineZ = playerZ * (1 - ((double) k / particleInterval)) + listedEntityZ * ((double) k / particleInterval);
+            level.sendParticles(type, lineX, lineY, lineZ, count, xOff, yOff, zOff, speed);
+        }
     }
 }
