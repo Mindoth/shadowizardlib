@@ -1,5 +1,6 @@
 package net.mindoth.shadowizardlib.event;
 
+import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.server.level.ServerLevel;
@@ -14,9 +15,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiPredicate;
 
 public class ShadowEvents {
 
@@ -41,19 +42,23 @@ public class ShadowEvents {
                 .ifPresent(modifier -> event.removeModifier(attribute, modifier));
     }
 
-    //Get an arraylist of LivingEntities around the given entity. Pass the centerpoint entity and size its' boundingbox will be extended
-    public static ArrayList<LivingEntity> getEntitiesAround(Entity caster, Level pLevel, double size, @Nullable List<LivingEntity> exceptions) {
-        ArrayList<LivingEntity> targets = (ArrayList<LivingEntity>) pLevel.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(size));
-        if ( exceptions != null && !exceptions.isEmpty() ) targets.removeIf(exceptions::contains);
+    //Get LivingEntities around the given entity. Pass the centerpoint entity and size its' boundingbox will be extended
+    public static List<Entity> getEntitiesAround(Entity caster, Level pLevel, double size, @Nullable BiPredicate<Entity, Entity> filter) {
+        List<Entity> targets = pLevel.getEntitiesOfClass(Entity.class, caster.getBoundingBox().inflate(size));
+        if ( filter != null ) {
+            List<Entity> filteredTargets = Lists.newArrayList();
+            for ( Entity entity : targets ) if ( filter.test(caster, entity) ) filteredTargets.add(entity);
+            targets = filteredTargets;
+        }
         return targets;
     }
 
     //Get nearest LivingEntity to given entity
-    public static Entity getNearestEntity(Entity caster, Level pLevel, double size, @Nullable List<LivingEntity> exceptions) {
-        ArrayList<LivingEntity> targets = getEntitiesAround(caster, pLevel, size, exceptions);
-        LivingEntity target = null;
+    public static Entity getNearestEntity(Entity caster, Level pLevel, double size, @Nullable BiPredicate<Entity, Entity> filter) {
+        List<Entity> targets = getEntitiesAround(caster, pLevel, size, filter);
+        Entity target = null;
         double lowestSoFar = Double.MAX_VALUE;
-        for ( LivingEntity closestSoFar : targets ) {
+        for ( Entity closestSoFar : targets ) {
             double testDistance = caster.distanceTo(closestSoFar);
             if ( testDistance < lowestSoFar ) target = closestSoFar;
         }
@@ -64,10 +69,8 @@ public class ShadowEvents {
     //Range is the distance entities are taken into account
     //Error is the distance the player's crosshair can be from target and still be considered as "looking at it"
     //Technically "caster" can be any entity but using a Player is recommended
-    public static Entity getPointedEntity(Level level, Entity caster, float range, float error, boolean isPlayer, boolean stopsAtSolid) {
-        int adjuster = 1;
-        if ( !isPlayer ) adjuster = -1;
-        Vec3 direction = calculateViewVector(caster.getXRot() * adjuster, caster.getYRot() * adjuster).normalize();
+    public static Entity getPointedEntity(Level level, Entity caster, float range, float error, boolean stopsAtSolid, @Nullable BiPredicate<Entity, Entity> filter) {
+        Vec3 direction = ShadowEvents.calculateViewVector(caster.getXRot(), caster.getYRot()).normalize();
         direction = direction.multiply(range, range, range);
         Vec3 center = caster.getEyePosition().add(direction);
         Entity returnEntity = caster;
@@ -90,7 +93,7 @@ public class ShadowEvents {
             Entity target = null;
             double lowestSoFar = Double.MAX_VALUE;
             for ( Entity closestSoFar : targets ) {
-                if ( closestSoFar instanceof LivingEntity ) {
+                if ( filter == null || filter.test(caster, closestSoFar) ) {
                     double testDistance = closestSoFar.distanceToSqr(center);
                     if ( testDistance < lowestSoFar ) target = closestSoFar;
                 }
@@ -115,7 +118,7 @@ public class ShadowEvents {
     }
 
     public static double blockHeight(Level level, Entity caster, float range, float error, int maxHeight, boolean stopsAtSolid) {
-        BlockPos startPos = ShadowEvents.getPointedEntity(level, caster, range, error, true, stopsAtSolid).blockPosition();
+        BlockPos startPos = ShadowEvents.getPointedEntity(level, caster, range, error, stopsAtSolid, null).blockPosition();
         double returnHeight = startPos.getY();
         for ( int i = startPos.getY() + 1; i < (startPos.getY() + maxHeight); i++ ) {
             BlockPos testBlockPost = new BlockPos(startPos.getX(), i, startPos.getZ());
@@ -128,11 +131,8 @@ public class ShadowEvents {
     }
 
     //Custom ray-tracing method
-    public static Vec3 getPoint(Level level, Entity caster, float range, float error, boolean isPlayer, boolean centerBlock, boolean stopsAtEntity, boolean stopsAtSolid, boolean stopsAtLiquid) {
-        int adjuster = 1;
-        if ( !isPlayer ) adjuster = -1;
-
-        Vec3 direction = ShadowEvents.calculateViewVector(caster.getXRot() * (float)adjuster, caster.getYRot() * (float)adjuster).normalize();
+    public static Vec3 getPoint(Level level, Entity caster, float range, float error, boolean centerBlock, boolean stopsAtEntity, boolean stopsAtSolid, boolean stopsAtLiquid) {
+        Vec3 direction = ShadowEvents.calculateViewVector(caster.getXRot(), caster.getYRot()).normalize();
         direction = direction.multiply((double)range, (double)range, (double)range);
         Vec3 center = caster.getEyePosition().add(direction);
         Vec3 returnPoint = center;
@@ -187,11 +187,8 @@ public class ShadowEvents {
     }
 
     //Use this instead if you need the blockpos of a block you're looking at
-    public static BlockPos getBlockPoint(Entity caster, float range, boolean isPlayer) {
-        int adjuster = 1;
-        if ( !isPlayer ) adjuster = -1;
-
-        Vec3 direction = ShadowEvents.calculateViewVector(caster.getXRot() * (float)adjuster, caster.getYRot() * (float)adjuster).normalize();
+    public static BlockPos getBlockPoint(Entity caster, float range) {
+        Vec3 direction = ShadowEvents.calculateViewVector(caster.getXRot(), caster.getYRot()).normalize();
         direction = direction.multiply(range, range, range);
         Vec3 center = caster.getEyePosition().add(direction);
         double playerX = caster.getEyePosition().x;
@@ -233,5 +230,12 @@ public class ShadowEvents {
             double lineZ = playerZ * (1 - ((double) k / particleInterval)) + listedEntityZ * ((double) k / particleInterval);
             level.sendParticles(type, lineX, lineY, lineZ, count, xOff, yOff, zOff, speed);
         }
+    }
+
+    @Nullable
+    public static Entity getEntityByUUID(Level level, @Nullable UUID uuid) {
+        if ( uuid == null || !(level instanceof ServerLevel serverLevel) ) return null;
+        for ( Entity entity : serverLevel.getAllEntities() ) if ( entity != null && entity.getUUID().equals(uuid) ) return entity;
+        return null;
     }
 }

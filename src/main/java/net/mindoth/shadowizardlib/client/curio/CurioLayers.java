@@ -10,6 +10,7 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 
 import java.util.function.Supplier;
 
+//TODO Move back to Skill Cloaks
 public class CurioLayers {
 
     public static final ModelLayerLocation
