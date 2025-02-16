@@ -1,9 +1,9 @@
-package net.mindoth.shadowizardlib.util;
+package net.mindoth.shadowizardlib.event;
 
-import net.mindoth.shadowizardlib.network.PacketDistro;
+import net.mindoth.shadowizardlib.network.PacketToggleClientEffects;
+import net.mindoth.shadowizardlib.network.PacketSyncClientEffects;
 import net.mindoth.shadowizardlib.network.ShadowizardNetwork;
-import net.mindoth.shadowizardlib.network.SupporterDisableMessage;
-import net.mindoth.shadowizardlib.registries.KeyBinds;
+import net.mindoth.shadowizardlib.client.KeyBinds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleOptions;
@@ -75,15 +75,20 @@ public class ThanksList {
             catch ( Exception k ) {
                 //Not possible
             }
-            if ( PARTICLES.size() > 0 ) {
+            if ( !PARTICLES.isEmpty() ) {
                 MinecraftForge.EVENT_BUS.addListener(ThanksList::clientTick);
                 MinecraftForge.EVENT_BUS.addListener(ThanksList::onClientJoin);
             }
         }, "ShadowizardLib Supporter Effect Loader").start();
     }
 
+    public static void onClientJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        UUID id = event.getEntity().getUUID();
+        if ( PARTICLES.get(id) != null ) ShadowizardNetwork.sendToAll(new PacketSyncClientEffects(0, id));
+    }
+
     public static void clientTick(TickEvent.ClientTickEvent event) {
-        if ( KeyBinds.TOGGLE.consumeClick() ) ShadowizardNetwork.CHANNEL.sendToServer(new SupporterDisableMessage(0));
+        if ( KeyBinds.TOGGLE.consumeClick() ) ShadowizardNetwork.sendToServer(new PacketToggleClientEffects());
         SupporterParticleType t = null;
         if ( event.phase == TickEvent.Phase.END && Minecraft.getInstance().level != null ) {
             for ( Player player : Minecraft.getInstance().level.players() ) {
@@ -94,14 +99,6 @@ public class ThanksList {
                     world.addParticle(type, player.getX() + rand.nextDouble() * 0.4 - 0.2, player.getY() + 0.1, player.getZ() + rand.nextDouble() * 0.4 - 0.2, 0, 0, 0);
                 }
             }
-        }
-    }
-
-    public static void onClientJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if ( (PARTICLES.get(event.getEntity().getUUID())) != null ) {
-            DISABLED.remove(event.getEntity().getUUID());
-            PacketDistro.sendTo(ShadowizardNetwork.CHANNEL, new SupporterDisableMessage(1, event.getEntity().getUUID()), event.getEntity());
-            PacketDistro.sendToAll(ShadowizardNetwork.CHANNEL, new SupporterDisableMessage(1, event.getEntity().getUUID()));
         }
     }
 }

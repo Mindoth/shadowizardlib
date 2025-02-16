@@ -1,6 +1,6 @@
 package net.mindoth.shadowizardlib.client.curio;
 
-import net.mindoth.shadowizardlib.ShadoWizardLib;
+import net.mindoth.shadowizardlib.ShadowizardLib;
 import net.mindoth.shadowizardlib.client.models.CloakModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -17,7 +17,7 @@ public class CurioLayers {
             SKILLCLOAK = createLayerLocation("skillcloak");
 
     public static ModelLayerLocation createLayerLocation(String name) {
-        return new ModelLayerLocation(new ResourceLocation(ShadoWizardLib.MOD_ID, name), name);
+        return new ModelLayerLocation(new ResourceLocation(ShadowizardLib.MOD_ID, name), name);
     }
 
     private static Supplier<LayerDefinition> layer(MeshDefinition mesh, int textureWidth, int textureHeight) {

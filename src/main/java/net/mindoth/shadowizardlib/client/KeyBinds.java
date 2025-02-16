@@ -1,4 +1,4 @@
-package net.mindoth.shadowizardlib.registries;
+package net.mindoth.shadowizardlib.client;
 
 import net.minecraft.client.KeyMapping;
 import org.lwjgl.glfw.GLFW;

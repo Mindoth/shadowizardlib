@@ -10,15 +10,13 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
-@Mod(ShadoWizardLib.MOD_ID)
-public class ShadoWizardLib {
+@Mod(ShadowizardLib.MOD_ID)
+public class ShadowizardLib {
     public static final String MOD_ID = "shadowizardlib";
 
-    public ShadoWizardLib() {
+    public ShadowizardLib() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            ShadoWizardLibClient.registerHandlers();
-        }
+        if ( FMLEnvironment.dist == Dist.CLIENT ) ShadowizardLibClient.registerHandlers();
         addRegistries(modEventBus);
     }
     private void addRegistries(final IEventBus modEventBus) {
