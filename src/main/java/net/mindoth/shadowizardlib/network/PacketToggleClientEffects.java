@@ -20,9 +20,7 @@ public class PacketToggleClientEffects {
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
             ServerPlayer sender = context.get().getSender();
-            if ( sender != null ) {
-                ShadowizardNetwork.sendToAll(new PacketSyncClientEffects(1, sender.getUUID()));
-            }
+            if ( sender != null ) ShadowNetwork.sendToAll(new PacketSyncClientEffects(1, sender.getUUID()));
         });
     }
 }

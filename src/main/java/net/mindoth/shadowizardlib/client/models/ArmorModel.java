@@ -73,24 +73,27 @@ public class ArmorModel <T extends LivingEntity> extends HumanoidModel<T> implem
 
     public void renderToBuffer(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         matrixStack.pushPose();
-        if (this.slot == ArmorItem.Type.HELMET) {
+        if ( this.slot == ArmorItem.Type.HELMET ) {
             this.modelHead.copyFrom(this.head);
             this.modelHead.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        } else if (this.slot == ArmorItem.Type.CHESTPLATE) {
+        }
+        else if ( this.slot == ArmorItem.Type.CHESTPLATE ) {
             this.modelBody.copyFrom(this.body);
             this.modelBody.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             this.modelRight_arm.copyFrom(this.rightArm);
             this.modelRight_arm.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             this.modelLeft_arm.copyFrom(this.leftArm);
             this.modelLeft_arm.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        } else if (this.slot == ArmorItem.Type.LEGGINGS) {
+        }
+        else if ( this.slot == ArmorItem.Type.LEGGINGS ) {
             this.modelBelt.copyFrom(this.body);
             this.modelBelt.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             this.modelRight_leg.copyFrom(this.rightLeg);
             this.modelRight_leg.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             this.modelLeft_leg.copyFrom(this.leftLeg);
             this.modelLeft_leg.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        } else if (this.slot == ArmorItem.Type.BOOTS) {
+        }
+        else if ( this.slot == ArmorItem.Type.BOOTS ) {
             this.modelRight_foot.copyFrom(this.rightLeg);
             this.modelRight_foot.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
             this.modelLeft_foot.copyFrom(this.leftLeg);

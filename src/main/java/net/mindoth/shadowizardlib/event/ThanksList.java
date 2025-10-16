@@ -2,7 +2,7 @@ package net.mindoth.shadowizardlib.event;
 
 import net.mindoth.shadowizardlib.network.PacketToggleClientEffects;
 import net.mindoth.shadowizardlib.network.PacketSyncClientEffects;
-import net.mindoth.shadowizardlib.network.ShadowizardNetwork;
+import net.mindoth.shadowizardlib.network.ShadowNetwork;
 import net.mindoth.shadowizardlib.client.KeyBinds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -84,16 +84,16 @@ public class ThanksList {
 
     public static void onClientJoin(PlayerEvent.PlayerLoggedInEvent event) {
         UUID id = event.getEntity().getUUID();
-        if ( PARTICLES.get(id) != null ) ShadowizardNetwork.sendToAll(new PacketSyncClientEffects(0, id));
+        if ( PARTICLES.get(id) != null ) ShadowNetwork.sendToAll(new PacketSyncClientEffects(0, id));
     }
 
     public static void clientTick(TickEvent.ClientTickEvent event) {
-        if ( KeyBinds.TOGGLE.consumeClick() ) ShadowizardNetwork.sendToServer(new PacketToggleClientEffects());
+        if ( KeyBinds.TOGGLE.consumeClick() ) ShadowNetwork.sendToServer(new PacketToggleClientEffects());
         SupporterParticleType t = null;
         if ( event.phase == TickEvent.Phase.END && Minecraft.getInstance().level != null ) {
             for ( Player player : Minecraft.getInstance().level.players() ) {
                 if ( !player.isInvisible() && player.tickCount * 3 % 2 == 0 && !DISABLED.contains(player.getUUID()) && (t = PARTICLES.get(player.getUUID())) != null ) {
-                    ClientLevel world = (ClientLevel) player.level();
+                    ClientLevel world = (ClientLevel)player.level();
                     RandomSource rand = world.random;
                     ParticleOptions type = t.type.get();
                     world.addParticle(type, player.getX() + rand.nextDouble() * 0.4 - 0.2, player.getY() + 0.1, player.getZ() + rand.nextDouble() * 0.4 - 0.2, 0, 0, 0);

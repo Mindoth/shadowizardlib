@@ -1,7 +1,8 @@
 package net.mindoth.shadowizardlib;
 
 import net.mindoth.shadowizardlib.client.curio.CurioLayers;
-import net.mindoth.shadowizardlib.network.ShadowizardNetwork;
+import net.mindoth.shadowizardlib.network.ShadowNetwork;
+import net.mindoth.shadowizardlib.registries.ModParticles;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -20,6 +21,9 @@ public class ShadowizardLib {
         addRegistries(modEventBus);
     }
     private void addRegistries(final IEventBus modEventBus) {
+        ModParticles.PARTICLES.register(modEventBus);
+
+        //KEEP THESE LAST
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::onRegisterLayerDefinitions);
     }
@@ -28,6 +32,6 @@ public class ShadowizardLib {
         CurioLayers.register(event);
     }
     public void commonSetup(final FMLCommonSetupEvent event) {
-        ShadowizardNetwork.init();
+        ShadowNetwork.init();
     }
 }
