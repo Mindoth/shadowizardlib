@@ -63,7 +63,7 @@ public class LightEvents {
         }
     }
 
-    protected void addEnchantParticles(Entity target, float size, HashMap<String, Float> stats) {
+    public static void addEnchantParticles(Entity target, float size, HashMap<String, Float> stats) {
         double var = 0.15D;
         double maxX = target.getBoundingBox().maxX + var;
         double minX = target.getBoundingBox().minX - var;
@@ -119,7 +119,7 @@ public class LightEvents {
         }
     }
 
-    protected void addAoeParticles(boolean targetBlocks, Level level, AABB box, float size, int age, HashMap<String, Float> stats) {
+    public static void addAoeParticles(boolean targetBlocks, Level level, AABB box, float size, int age, HashMap<String, Float> stats) {
         Vec3 center = box.getCenter();
         double maxX = box.maxX;
         double minX = box.minX;
