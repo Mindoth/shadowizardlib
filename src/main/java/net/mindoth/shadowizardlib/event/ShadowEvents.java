@@ -316,49 +316,4 @@ public class ShadowEvents {
         }
         return blockPos;
     }
-
-
-    public static void summonParticleLine(Vec3 startPos, Vec3 endPos, int amount, Vec3 center, Level level, float size, int age, HashMap<String, Float> stats) {
-        double startX = startPos.x;
-        double startY = startPos.y;
-        double startZ = startPos.z;
-        double endX = endPos.x;
-        double endY = endPos.y;
-        double endZ = endPos.z;
-        double speed = 0.05D;
-        for ( int k = 1; k < (1 + amount); k++ ) {
-            double vecX = new Random().nextDouble(1.0D - -1.0D) + -1.0D;
-            double vecY = new Random().nextDouble(1.0D - -1.0D) + -1.0D;
-            double vecZ = new Random().nextDouble(1.0D - -1.0D) + -1.0D;
-            double lineX = startX * (1 - ((double) k / amount)) + endX * ((double) k / amount);
-            double lineY = startY * (1 - ((double) k / amount)) + endY * ((double) k / amount);
-            double lineZ = startZ * (1 - ((double) k / amount)) + endZ * ((double) k / amount);
-            generateParticles(new Vec3(lineX, lineY, lineZ), center, level, size, age, vecX * speed, vecY * speed, vecZ * speed, stats);
-        }
-    }
-
-    public static void generateParticles(Vec3 pos, Vec3 center, Level level, float size, int age, double vecX, double vecY, double vecZ, HashMap<String, Float> stats) {
-        ParticleColor.IntWrapper color = new ParticleColor.IntWrapper(getParticleColor(stats));
-        ShadowNetwork.sendToNearby(new PacketSendCustomParticles(color.r, color.g, color.b, size, age, false, 1,
-                pos.x, pos.y, pos.z, vecX, vecY, vecZ), level, center);
-    }
-
-    public static HashMap<String, Float> defaultStats() {
-        HashMap<String, Float> stats = new HashMap<>();
-        stats.put("red", -1.0F);
-        stats.put("green", -1.0F);
-        stats.put("blue", -1.0F);
-        return stats;
-    }
-
-    public static ParticleColor getParticleColor(HashMap<String, Float> stats) {
-        ParticleColor color = new ParticleColor(Mth.floor(stats.get("red")), Mth.floor(stats.get("green")), Mth.floor(stats.get("blue")));
-        if ( color.getRed() < 0 || color.getRed() > 255 || color.getGreen() < 0 || color.getGreen() > 255 || color.getBlue() < 0 || color.getBlue() > 255 ) {
-            int r = new Random().nextInt(0, 256);
-            int g = new Random().nextInt(0, 256);
-            int b = new Random().nextInt(0, 256);
-            return new ParticleColor(r, g, b);
-        }
-        else return color;
-    }
 }
