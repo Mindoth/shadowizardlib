@@ -1,9 +1,9 @@
 package net.mindoth.shadowizardlib.event;
 
-import net.mindoth.shadowizardlib.network.PacketToggleClientEffects;
-import net.mindoth.shadowizardlib.network.PacketSyncClientEffects;
-import net.mindoth.shadowizardlib.network.ShadowNetwork;
 import net.mindoth.shadowizardlib.client.KeyBinds;
+import net.mindoth.shadowizardlib.network.PacketSyncClientEffects;
+import net.mindoth.shadowizardlib.network.PacketToggleClientEffects;
+import net.mindoth.shadowizardlib.network.ShadowNetwork;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleOptions;

@@ -4,9 +4,7 @@ import net.mindoth.shadowizardlib.client.particle.ember.EmberParticleProvider;
 import net.mindoth.shadowizardlib.client.particle.ember.ParticleColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 public class PacketSendCustomParticles {
 
@@ -72,12 +70,12 @@ public class PacketSendCustomParticles {
         buf.writeDouble(this.vz);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
-        contextSupplier.get().enqueueWork(() -> {
+    public void handle(CustomPayloadEvent.Context context) {
+        context.enqueueWork(() -> {
             Minecraft minecraft = Minecraft.getInstance();
             minecraft.level.addParticle(EmberParticleProvider.createData(new ParticleColor(this.r, this.g, this.b), this.size, this.age, this.fade, this.renderType),
                     this.x, this.y, this.z, this.vx, this.vy, this.vz);
         });
-        contextSupplier.get().setPacketHandled(true);
+        context.setPacketHandled(true);
     }
 }

@@ -3,6 +3,7 @@ package net.mindoth.shadowizardlib.event;
 import net.mindoth.shadowizardlib.client.particle.ember.ParticleColor;
 import net.mindoth.shadowizardlib.network.PacketSendCustomParticles;
 import net.mindoth.shadowizardlib.network.ShadowNetwork;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -117,6 +118,19 @@ public class LightEvents {
             ShadowNetwork.sendToPlayersTrackingEntity(new PacketSendCustomParticles(color.r, color.g, color.b, size, age, false, getParticleType(stats),
                     pos.x, pos.y, pos.z, vecX, vecY, vecZ), target, true);
         }
+    }
+
+    protected void aoeEntitySpellParticles(Level level, AABB box, float range, HashMap<String, Float> stats) {
+        Vec3 center = box.getCenter();
+        BlockPos pos = new BlockPos(Mth.floor(center.x), Mth.floor(center.y), Mth.floor(center.z));
+        double tempY = center.y;
+        for ( int i = pos.getY(); i >= Mth.floor(center.y - range); i-- ) {
+            BlockPos tempPos = new BlockPos(pos.getX(), i, pos.getZ());
+            if ( level.getBlockState(tempPos).isSolid() ) break;
+            else tempY = i;
+        }
+        box = box.move(0, -(center.y - tempY), 0);
+        LightEvents.addAoeParticles(false, level, box, 0.15F, 8, stats);
     }
 
     public static void addAoeParticles(boolean targetBlocks, Level level, AABB box, float size, int age, HashMap<String, Float> stats) {

@@ -10,10 +10,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.network.SimpleChannel;
 
 public class ShadowNetwork {
     private static SimpleChannel CHANNEL;
@@ -24,11 +24,11 @@ public class ShadowNetwork {
     }
 
     public static void init() {
-        SimpleChannel net = NetworkRegistry.ChannelBuilder
-                .named(new ResourceLocation(ShadowizardLib.MOD_ID, "network"))
-                .networkProtocolVersion(() -> "3.0.0")
-                .clientAcceptedVersions(s -> true)
-                .serverAcceptedVersions(s -> true)
+        SimpleChannel net = ChannelBuilder
+                .named(ResourceLocation.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "network"))
+                .networkProtocolVersion(3)
+                .clientAcceptedVersions((s, b) -> true)
+                .serverAcceptedVersions((s, b) -> true)
                 .simpleChannel();
 
         CHANNEL = net;
@@ -53,11 +53,11 @@ public class ShadowNetwork {
     }
 
     public static <MSG> void sendToServer(MSG message) {
-        CHANNEL.sendToServer(message);
+        CHANNEL.send(message, PacketDistributor.SERVER.noArg());
     }
 
     public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
-        if ( player != null ) CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), message);
+        if ( player != null ) CHANNEL.send(message, PacketDistributor.PLAYER.with(player));
     }
 
     public static <MSG> void sendToPlayersTrackingEntity(MSG message, Entity entity) {
@@ -66,7 +66,7 @@ public class ShadowNetwork {
 
     public static <MSG> void sendToPlayersTrackingEntity(MSG message, Entity entity, boolean sendToSource) {
         if ( entity != null ) {
-            CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
+            CHANNEL.send(message, PacketDistributor.TRACKING_ENTITY.with(entity));
             if ( sendToSource && entity instanceof ServerPlayer serverPlayer ) sendToPlayer(message, serverPlayer);
         }
     }
@@ -93,6 +93,6 @@ public class ShadowNetwork {
     }
 
     public static <MSG> void sendToAll(MSG message) {
-        CHANNEL.send(PacketDistributor.ALL.noArg(), message);
+        CHANNEL.send(message, PacketDistributor.ALL.noArg());
     }
 }

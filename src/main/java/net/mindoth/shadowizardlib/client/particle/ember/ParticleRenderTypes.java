@@ -16,7 +16,7 @@ public class ParticleRenderTypes {
     static final ParticleRenderType AM_RENDER_GLOW = new ParticleRenderType() {
 
         @Override
-        public void begin(BufferBuilder buffer, TextureManager textureManager) {
+        public BufferBuilder begin(Tesselator buffer, TextureManager textureManager) {
             RenderSystem.enableDepthTest();
             Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
             RenderSystem.depthMask(false);
@@ -25,11 +25,7 @@ public class ParticleRenderTypes {
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
             //RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
             buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-        }
-
-        @Override
-        public void end(Tesselator tessellator) {
-            tessellator.end();
+            return buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
         }
 
 
@@ -42,7 +38,7 @@ public class ParticleRenderTypes {
     static final ParticleRenderType AM_RENDER_NO_ALPHA = new ParticleRenderType() {
 
         @Override
-        public void begin(BufferBuilder buffer, TextureManager textureManager) {
+        public BufferBuilder begin(Tesselator buffer, TextureManager textureManager) {
             RenderSystem.enableDepthTest();
             Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
             RenderSystem.depthMask(false);
@@ -67,11 +63,7 @@ public class ParticleRenderTypes {
             //Older method
             //RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             //RenderSystem.alphaFunc(516, 0.003921569F);
-        }
-
-        @Override
-        public void end(Tesselator tessellator) {
-            tessellator.end();
+            return buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
         }
 
         @Override
@@ -83,7 +75,7 @@ public class ParticleRenderTypes {
     static final ParticleRenderType AM_RENDER_FLAT = new ParticleRenderType() {
 
         @Override
-        public void begin(BufferBuilder buffer, TextureManager textureManager) {
+        public BufferBuilder begin(Tesselator buffer, TextureManager textureManager) {
             RenderSystem.enableDepthTest();
             Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
             RenderSystem.depthMask(false);
@@ -91,11 +83,7 @@ public class ParticleRenderTypes {
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ZERO);
             buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-        }
-
-        @Override
-        public void end(Tesselator tessellator) {
-            tessellator.end();
+            return buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
         }
 
         @Override

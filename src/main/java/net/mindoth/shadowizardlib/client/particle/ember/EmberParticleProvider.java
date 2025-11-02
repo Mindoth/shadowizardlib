@@ -7,7 +7,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.ParticleOptions;
 
-public class EmberParticleProvider implements ParticleProvider<ColoredDynamicTypeData> {
+public class EmberParticleProvider implements ParticleProvider<ColorParticleTypeData> {
 
     private final SpriteSet spriteSet;
     public static final String NAME = "ember";
@@ -17,12 +17,12 @@ public class EmberParticleProvider implements ParticleProvider<ColoredDynamicTyp
     }
 
     @Override
-    public Particle createParticle(ColoredDynamicTypeData data, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+    public Particle createParticle(ColorParticleTypeData data, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
         return new ParticleEmber(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(), data.color.getGreen(), data.color.getBlue(),
                 data.scale, data.age, data.fade, data.renderType, this.spriteSet);
     }
 
     public static ParticleOptions createData(ParticleColor color, float scale, int age, boolean fade, int renderType) {
-        return new ColoredDynamicTypeData(ModParticles.EMBER_TYPE.get(), color, scale, age, fade, renderType);
+        return new ColorParticleTypeData(ModParticles.EMBER_TYPE.get(), color, scale, age, fade, renderType);
     }
 }

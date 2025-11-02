@@ -1,26 +1,18 @@
 package net.mindoth.shadowizardlib.event;
 
 import com.google.common.collect.Lists;
-import net.mindoth.shadowizardlib.client.particle.ember.ParticleColor;
-import net.mindoth.shadowizardlib.network.PacketSendCustomParticles;
-import net.mindoth.shadowizardlib.network.ShadowNetwork;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.ItemAttributeModifierEvent;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.function.BiPredicate;
 
@@ -45,14 +37,14 @@ public class ShadowEvents {
     }
 
     //Pass an item attribute and the uuid for said attribute, and it will be removed. Usually used inside ItemAttributeModifierEvent for changing attack damage/speed of item
-    public static void findAndRemoveVanillaModifier(ItemAttributeModifierEvent event, Attribute attribute, UUID baseUUID) {
+    /*public static void findAndRemoveVanillaModifier(ItemAttributeModifierEvent event, Attribute attribute, UUID baseUUID) {
         event.getOriginalModifiers()
                 .get(attribute)
                 .stream()
                 .filter(modifier -> modifier.getId() == baseUUID)
                 .findAny()
                 .ifPresent(modifier -> event.removeModifier(attribute, modifier));
-    }
+    }*/
 
     //Get LivingEntities around the given entity. Pass the centerpoint entity and size its' boundingbox will be extended
     public static List<Entity> getEntitiesAround(Entity caster, Level pLevel, double size, @Nullable BiPredicate<Entity, Entity> filter) {
