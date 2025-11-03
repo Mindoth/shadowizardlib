@@ -1,18 +1,18 @@
 package net.mindoth.shadowizardlib.event;
 
-import net.mindoth.shadowizardlib.client.KeyBinds;
-import net.mindoth.shadowizardlib.network.PacketSyncClientEffects;
-import net.mindoth.shadowizardlib.network.PacketToggleClientEffects;
-import net.mindoth.shadowizardlib.network.ShadowNetwork;
+import net.mindoth.shadowizardlib.ShadowizardLibClient;
+import net.mindoth.shadowizardlib.network.SyncClientEffectsPacket;
+import net.mindoth.shadowizardlib.network.ToggleClientEffectsPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -76,21 +76,21 @@ public class ThanksList {
                 //Not possible
             }
             if ( !PARTICLES.isEmpty() ) {
-                MinecraftForge.EVENT_BUS.addListener(ThanksList::clientTick);
-                MinecraftForge.EVENT_BUS.addListener(ThanksList::onClientJoin);
+                NeoForge.EVENT_BUS.addListener(ThanksList::clientTick);
+                NeoForge.EVENT_BUS.addListener(ThanksList::onClientJoin);
             }
         }, "ShadowizardLib Supporter Effect Loader").start();
     }
 
     public static void onClientJoin(PlayerEvent.PlayerLoggedInEvent event) {
         UUID id = event.getEntity().getUUID();
-        if ( PARTICLES.get(id) != null ) ShadowNetwork.sendToAll(new PacketSyncClientEffects(0, id));
+        if ( PARTICLES.get(id) != null ) PacketDistributor.sendToAllPlayers(new SyncClientEffectsPacket(0, id));
     }
 
-    public static void clientTick(TickEvent.ClientTickEvent event) {
-        if ( KeyBinds.TOGGLE.consumeClick() ) ShadowNetwork.sendToServer(new PacketToggleClientEffects());
+    public static void clientTick(ClientTickEvent.Post event) {
+        if ( ShadowizardLibClient.ClientModBusEvents.TOGGLE.consumeClick() ) PacketDistributor.sendToServer(new ToggleClientEffectsPacket());
         SupporterParticleType t = null;
-        if ( event.phase == TickEvent.Phase.END && Minecraft.getInstance().level != null ) {
+        if ( Minecraft.getInstance().level != null ) {
             for ( Player player : Minecraft.getInstance().level.players() ) {
                 if ( !player.isInvisible() && player.tickCount * 3 % 2 == 0 && !DISABLED.contains(player.getUUID()) && (t = PARTICLES.get(player.getUUID())) != null ) {
                     ClientLevel world = (ClientLevel)player.level();
