@@ -13,8 +13,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SendCustomParticlesPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<SendCustomParticlesPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "send_custom_particles"));
+    public static final Type<SendCustomParticlesPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "send_custom_particles"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SendCustomParticlesPacket> STREAM_CODEC =
             CustomPacketPayload.codec(SendCustomParticlesPacket::encode, SendCustomParticlesPacket::new);

@@ -13,15 +13,15 @@ import java.util.UUID;
 
 public class SyncClientEffectsPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<SyncClientEffectsPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "sync_client_effects"));
+    public static final Type<SyncClientEffectsPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "sync_client_effects"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncClientEffectsPacket> STREAM_CODEC =
             CustomPacketPayload.codec(SyncClientEffectsPacket::encode, SyncClientEffectsPacket::new);
 
     //type = 0: toggle effects on player join. type = 1: toggle effects.
-    private int type;
-    private UUID id;
+    public int type;
+    public UUID id;
 
     public SyncClientEffectsPacket(int type, UUID id) {
         this.type = type;

@@ -1,94 +1,45 @@
 package net.mindoth.shadowizardlib.client.particle.ember;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.ParticleRenderType;
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.DestFactor;
+import com.mojang.blaze3d.platform.SourceFactor;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureManager;
 
 public class ParticleRenderTypes {
 
-    static final ParticleRenderType AM_RENDER_GLOW = new ParticleRenderType() {
+    private static final BlendFunction GLOW_BLEND = new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE);
+    public static final RenderPipeline GLOW_PIPELINE = RenderPipelines.register(
+            RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET)
+                    .withLocation("pipeline/shadowizardlib_glow")
+                    .withDepthWrite(false)
+                    .withBlend(GLOW_BLEND)
+                    .build()
+    );
 
-        @Override
-        public BufferBuilder begin(Tesselator buffer, TextureManager textureManager) {
-            RenderSystem.enableDepthTest();
-            Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
-            RenderSystem.depthMask(false);
-            RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-            RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-            //RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-            return buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-        }
+    public static final SingleQuadParticle.Layer SW_RENDER_GLOW = new SingleQuadParticle.Layer(true, TextureAtlas.LOCATION_PARTICLES, GLOW_PIPELINE);
 
+    private static final BlendFunction NO_ALPHA_BLEND = new BlendFunction(SourceFactor.SRC_COLOR, DestFactor.ONE);
+    public static final RenderPipeline NO_ALPHA_PIPELINE = RenderPipelines.register(
+            RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET)
+                    .withLocation("pipeline/shadowizardlib_no_alpha")
+                    .withDepthWrite(false)
+                    .withBlend(NO_ALPHA_BLEND)
+                    .build()
+    );
 
-        @Override
-        public String toString() {
-            return "shadowizardlib:sw_rend_glow";
-        }
-    };
+    public static final SingleQuadParticle.Layer SW_RENDER_NO_ALPHA = new SingleQuadParticle.Layer(true, TextureAtlas.LOCATION_PARTICLES, NO_ALPHA_PIPELINE);
 
-    static final ParticleRenderType AM_RENDER_NO_ALPHA = new ParticleRenderType() {
+    private static final BlendFunction FLAT_BLEND = new BlendFunction(SourceFactor.SRC_COLOR, DestFactor.ZERO);
+    public static final RenderPipeline FLAT_PIPELINE = RenderPipelines.register(
+            RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET)
+                    .withLocation("pipeline/shadowizardlib_no_alpha")
+                    .withDepthWrite(false)
+                    .withBlend(FLAT_BLEND)
+                    .build()
+    );
 
-        @Override
-        public BufferBuilder begin(Tesselator buffer, TextureManager textureManager) {
-            RenderSystem.enableDepthTest();
-            Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
-            RenderSystem.depthMask(false);
-            RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-            RenderSystem.enableBlend();
-
-            //Solution from here https://community.khronos.org/t/best-blending-mode-for-particles/14987
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
-            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-
-            //Old method
-            /*RenderSystem.depthMask(false);
-            textureManager.bindForSetup(TextureAtlas.LOCATION_PARTICLES);
-            RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ZERO);
-            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);*/
-
-            //This REALLY needs some work, Thanks Mojang...
-            /*RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ONE_MINUS_SRC_COLOR, GlStateManager.DestFactor.DST_COLOR,
-                    GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);*/
-
-            //Older method
-            //RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            //RenderSystem.alphaFunc(516, 0.003921569F);
-            return buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-        }
-
-        @Override
-        public String toString() {
-            return "shadowizardlib:sw_rend_no_alpha";
-        }
-    };
-
-    static final ParticleRenderType AM_RENDER_FLAT = new ParticleRenderType() {
-
-        @Override
-        public BufferBuilder begin(Tesselator buffer, TextureManager textureManager) {
-            RenderSystem.enableDepthTest();
-            Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
-            RenderSystem.depthMask(false);
-            RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-            RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ZERO);
-            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-            return buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-        }
-
-        @Override
-        public String toString() {
-            return "shadowizardlib:sw_rend_flat";
-        }
-    };
+    public static final SingleQuadParticle.Layer SW_RENDER_FLAT = new SingleQuadParticle.Layer(true, TextureAtlas.LOCATION_PARTICLES, FLAT_PIPELINE);
 }

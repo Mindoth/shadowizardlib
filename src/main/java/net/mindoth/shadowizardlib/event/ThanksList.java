@@ -10,6 +10,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -31,7 +32,7 @@ public class ThanksList {
         CAMPFIRE_SMOKE(() -> ParticleTypes.CAMPFIRE_COSY_SMOKE),
         CLOUD(() -> ParticleTypes.CLOUD),
         DMG_HEART(() -> ParticleTypes.DAMAGE_INDICATOR),
-        DRAGON_BREATH(() -> ParticleTypes.DRAGON_BREATH),
+        //DRAGON_BREATH(() -> ParticleTypes.DRAGON_BREATH),
         ELECTRIC_SPARK(() -> ParticleTypes.ELECTRIC_SPARK),
         END_ROD(() -> ParticleTypes.END_ROD),
         FIRE(() -> ParticleTypes.FLAME),
@@ -88,7 +89,7 @@ public class ThanksList {
     }
 
     public static void clientTick(ClientTickEvent.Post event) {
-        if ( ShadowizardLibClient.ClientModBusEvents.TOGGLE.consumeClick() ) PacketDistributor.sendToServer(new ToggleClientEffectsPacket());
+        if ( ShadowizardLibClient.ClientModBusEvents.TOGGLE.consumeClick() ) ClientPacketDistributor.sendToServer(new ToggleClientEffectsPacket());
         SupporterParticleType t = null;
         if ( Minecraft.getInstance().level != null ) {
             for ( Player player : Minecraft.getInstance().level.players() ) {

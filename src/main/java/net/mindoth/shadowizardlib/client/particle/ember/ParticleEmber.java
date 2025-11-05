@@ -2,13 +2,10 @@ package net.mindoth.shadowizardlib.client.particle.ember;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.TextureSheetParticle;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
-public class ParticleEmber extends TextureSheetParticle {
+public class ParticleEmber extends SingleQuadParticle {
     public boolean fade;
     public float colorR;
     public float colorG;
@@ -24,7 +21,7 @@ public class ParticleEmber extends TextureSheetParticle {
 
     protected ParticleEmber(ClientLevel level, double x, double y, double z, double xd, double yd, double zd, float r, float g, float b, float scale, int lifetime,
                             boolean fade, int renderType, SpriteSet sprite) {
-        super(level, x, y, z, xd, yd, zd);
+        super(level, x, y, z, xd, yd, zd, sprite.first());
         this.colorR = r;
         this.colorG = g;
         this.colorB = b;
@@ -46,7 +43,7 @@ public class ParticleEmber extends TextureSheetParticle {
         this.destY = (float)yd;
         this.destZ = (float)zd;
         //this.roll = 2.0F * (float)Math.PI;
-        this.pickSprite(sprite);
+        //this.pickSprite(sprite);
         this.renderType = renderType;
     }
 
@@ -68,12 +65,8 @@ public class ParticleEmber extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        ParticleRenderType type = ParticleRenderType.PARTICLE_SHEET_OPAQUE;
-        if ( this.renderType == 1 ) type = ParticleRenderTypes.AM_RENDER_GLOW;
-        if ( this.renderType == 2 ) type = ParticleRenderTypes.AM_RENDER_NO_ALPHA;
-        if ( this.renderType == 3 ) type = ParticleRenderTypes.AM_RENDER_FLAT;
-        return type;
+    public ParticleRenderType getGroup() {
+        return ParticleRenderType.SINGLE_QUADS;
     }
 
 
@@ -85,5 +78,14 @@ public class ParticleEmber extends TextureSheetParticle {
     @Override
     public boolean isAlive() {
         return this.age < this.lifetime;
+    }
+
+    @Override
+    protected Layer getLayer() {
+        Layer type = Layer.TRANSLUCENT;
+        if ( this.renderType == 1 ) type = ParticleRenderTypes.SW_RENDER_GLOW;
+        if ( this.renderType == 2 ) type = ParticleRenderTypes.SW_RENDER_NO_ALPHA;
+        if ( this.renderType == 3 ) type = ParticleRenderTypes.SW_RENDER_FLAT;
+        return type;
     }
 }

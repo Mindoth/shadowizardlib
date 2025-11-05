@@ -12,7 +12,7 @@ public class ShadowizardLib {
     public static final String MOD_ID = "shadowizardlib";
 
     public ShadowizardLib(IEventBus modBus, ModContainer modContainer) {
-        if ( FMLEnvironment.dist == Dist.CLIENT ) ShadowizardLibClient.registerHandlers(modBus, modContainer);
+        if ( FMLEnvironment.getDist() == Dist.CLIENT ) ShadowizardLibClient.registerHandlers(modBus, modContainer);
         addRegistries(modBus);
     }
 

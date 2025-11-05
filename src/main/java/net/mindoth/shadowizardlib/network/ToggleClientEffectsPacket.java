@@ -12,8 +12,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class ToggleClientEffectsPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<ToggleClientEffectsPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "toggle_client_effects"));
+    public static final Type<ToggleClientEffectsPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "toggle_client_effects"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ToggleClientEffectsPacket> STREAM_CODEC =
             CustomPacketPayload.codec(ToggleClientEffectsPacket::encode, ToggleClientEffectsPacket::new);

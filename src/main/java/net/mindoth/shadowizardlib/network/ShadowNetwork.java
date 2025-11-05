@@ -6,7 +6,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = ShadowizardLib.MOD_ID)
+@EventBusSubscriber(modid = ShadowizardLib.MOD_ID)
 public class ShadowNetwork {
 
     @SubscribeEvent
