@@ -28,8 +28,9 @@ public class ShadowizardLibClient {
     @EventBusSubscriber(modid = ShadowizardLib.MOD_ID, value = Dist.CLIENT)
     public static class ClientModBusEvents {
 
-        public static final String KEY_TOGGLE = "shadowizardlib.toggle";
-        public static final KeyMapping.Category KEY_CATEGORY_SHADOWIZARDLIB = new KeyMapping.Category(ResourceLocation.parse("key.category.shadowizardlib"));
+        public static final String KEY_TOGGLE = "key.shadowizardlib.toggle";
+        public static final KeyMapping.Category KEY_CATEGORY_SHADOWIZARDLIB =
+                new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "shadowizardlib"));
         public static final KeyMapping TOGGLE = new KeyMapping(KEY_TOGGLE, GLFW.GLFW_KEY_I, KEY_CATEGORY_SHADOWIZARDLIB);
 
         @SubscribeEvent
