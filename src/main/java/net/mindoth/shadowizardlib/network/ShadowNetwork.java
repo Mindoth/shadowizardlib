@@ -13,8 +13,9 @@ public class ShadowNetwork {
     public static void register(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar payloadRegistrar = event.registrar(ShadowizardLib.MOD_ID).versioned("3.0.0").optional();
 
-        payloadRegistrar.playToClient(SyncClientEffectsPacket.TYPE, SyncClientEffectsPacket.STREAM_CODEC, SyncClientEffectsPacket::handle);
-        payloadRegistrar.playToServer(ToggleClientEffectsPacket.TYPE, ToggleClientEffectsPacket.STREAM_CODEC, ToggleClientEffectsPacket::handle);
         payloadRegistrar.playToClient(SendCustomParticlesPacket.TYPE, SendCustomParticlesPacket.STREAM_CODEC, SendCustomParticlesPacket::handle);
+
+        payloadRegistrar.playToServer(ToggleClientEffectsPacket.TYPE, ToggleClientEffectsPacket.STREAM_CODEC, ToggleClientEffectsPacket::handle);
+        payloadRegistrar.playToClient(SyncEnabledListPacket.TYPE, SyncEnabledListPacket.STREAM_CODEC, SyncEnabledListPacket::handle);
     }
 }

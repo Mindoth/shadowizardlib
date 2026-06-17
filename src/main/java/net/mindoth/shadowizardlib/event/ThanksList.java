@@ -1,12 +1,13 @@
 package net.mindoth.shadowizardlib.event;
 
 import net.mindoth.shadowizardlib.ShadowizardLibClient;
-import net.mindoth.shadowizardlib.network.SyncClientEffectsPacket;
+import net.mindoth.shadowizardlib.network.SyncEnabledListPacket;
 import net.mindoth.shadowizardlib.network.ToggleClientEffectsPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -25,7 +26,8 @@ import java.util.function.Supplier;
 public class ThanksList {
 
     static Map<UUID, SupporterParticleType> PARTICLES = new HashMap<>();
-    public static final Set<UUID> DISABLED = new HashSet<>();
+    public static final Set<UUID> SERVER_ENABLED = new HashSet<>();
+    public static Set<UUID> ENABLED = new HashSet<>();
 
     public enum SupporterParticleType {
         ASH(() -> ParticleTypes.ASH),
@@ -84,8 +86,10 @@ public class ThanksList {
     }
 
     public static void onClientJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        UUID id = event.getEntity().getUUID();
-        if ( PARTICLES.get(id) != null ) PacketDistributor.sendToAllPlayers(new SyncClientEffectsPacket(0, id));
+        if ( event.getEntity() instanceof ServerPlayer player ) {
+            SERVER_ENABLED.remove(player.getUUID());
+            PacketDistributor.sendToAllPlayers(new SyncEnabledListPacket(SERVER_ENABLED));
+        }
     }
 
     public static void clientTick(ClientTickEvent.Post event) {
@@ -93,7 +97,7 @@ public class ThanksList {
         SupporterParticleType t = null;
         if ( Minecraft.getInstance().level != null ) {
             for ( Player player : Minecraft.getInstance().level.players() ) {
-                if ( !player.isInvisible() && player.tickCount * 3 % 2 == 0 && !DISABLED.contains(player.getUUID()) && (t = PARTICLES.get(player.getUUID())) != null ) {
+                if ( !player.isInvisible() && player.tickCount * 3 % 2 == 0 && ENABLED.contains(player.getUUID()) && (t = PARTICLES.get(player.getUUID())) != null ) {
                     ClientLevel world = (ClientLevel)player.level();
                     RandomSource rand = world.random;
                     ParticleOptions type = t.type.get();
