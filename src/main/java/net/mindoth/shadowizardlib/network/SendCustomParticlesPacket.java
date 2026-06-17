@@ -1,12 +1,23 @@
 package net.mindoth.shadowizardlib.network;
 
+import net.mindoth.shadowizardlib.ShadowizardLib;
 import net.mindoth.shadowizardlib.client.particle.ember.EmberParticleProvider;
 import net.mindoth.shadowizardlib.client.particle.ember.ParticleColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public class PacketSendCustomParticles {
+public class SendCustomParticlesPacket implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<SendCustomParticlesPacket> TYPE =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "send_custom_particles"));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, SendCustomParticlesPacket> STREAM_CODEC =
+            CustomPacketPayload.codec(SendCustomParticlesPacket::encode, SendCustomParticlesPacket::new);
 
     public int r;
     public int g;
@@ -22,7 +33,7 @@ public class PacketSendCustomParticles {
     public double vy;
     public double vz;
 
-    public PacketSendCustomParticles(int r, int g, int b, float size, int age, boolean fade, int renderType, double x, double y, double z, double vx, double vy, double vz) {
+    public SendCustomParticlesPacket(int r, int g, int b, float size, int age, boolean fade, int renderType, double x, double y, double z, double vx, double vy, double vz) {
         this.r = r;
         this.g = g;
         this.b = b;
@@ -38,7 +49,7 @@ public class PacketSendCustomParticles {
         this.vz = vz;
     }
 
-    public PacketSendCustomParticles(FriendlyByteBuf buf) {
+    public SendCustomParticlesPacket(FriendlyByteBuf buf) {
         this.r = buf.readInt();
         this.g = buf.readInt();
         this.b = buf.readInt();
@@ -70,12 +81,16 @@ public class PacketSendCustomParticles {
         buf.writeDouble(this.vz);
     }
 
-    public void handle(CustomPayloadEvent.Context context) {
+    public static void handle(SendCustomParticlesPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             Minecraft minecraft = Minecraft.getInstance();
-            minecraft.level.addParticle(EmberParticleProvider.createData(new ParticleColor(this.r, this.g, this.b), this.size, this.age, this.fade, this.renderType),
-                    this.x, this.y, this.z, this.vx, this.vy, this.vz);
+            minecraft.level.addParticle(EmberParticleProvider.createData(new ParticleColor(packet.r, packet.g, packet.b), packet.size, packet.age, packet.fade, packet.renderType),
+                    packet.x, packet.y, packet.z, packet.vx, packet.vy, packet.vz);
         });
-        context.setPacketHandled(true);
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

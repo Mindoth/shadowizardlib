@@ -36,6 +36,7 @@ public class ShadowEvents {
         return targets;
     }
 
+    //TODO: figure this out before porting Dreadsteel
     //Pass an item attribute and the uuid for said attribute, and it will be removed. Usually used inside ItemAttributeModifierEvent for changing attack damage/speed of item
     /*public static void findAndRemoveVanillaModifier(ItemAttributeModifierEvent event, Attribute attribute, UUID baseUUID) {
         event.getOriginalModifiers()

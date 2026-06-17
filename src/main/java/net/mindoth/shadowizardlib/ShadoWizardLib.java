@@ -1,30 +1,25 @@
 package net.mindoth.shadowizardlib;
 
-import net.mindoth.shadowizardlib.network.ShadowNetwork;
 import net.mindoth.shadowizardlib.registries.ModParticles;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraft.world.item.Item;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
-@SuppressWarnings("removal")
 @Mod(ShadowizardLib.MOD_ID)
 public class ShadowizardLib {
     public static final String MOD_ID = "shadowizardlib";
 
-    public ShadowizardLib() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        if ( FMLEnvironment.dist == Dist.CLIENT ) ShadowizardLibClient.registerHandlers();
-        addRegistries(modEventBus);
-        modEventBus.addListener(this::commonSetup);
-    }
-    private void addRegistries(final IEventBus modEventBus) {
-        ModParticles.PARTICLES.register(modEventBus);
+    public ShadowizardLib(IEventBus modBus, ModContainer modContainer) {
+        if ( FMLEnvironment.dist == Dist.CLIENT ) ShadowizardLibClient.registerHandlers(modBus, modContainer);
+        addRegistries(modBus);
     }
 
-    public void commonSetup(final FMLCommonSetupEvent event) {
-        ShadowNetwork.init();
+    private void addRegistries(final IEventBus modEventBus) {
+        ModParticles.PARTICLES.register(modEventBus);
     }
 }

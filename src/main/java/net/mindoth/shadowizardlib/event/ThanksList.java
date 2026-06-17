@@ -1,18 +1,19 @@
 package net.mindoth.shadowizardlib.event;
 
-import net.mindoth.shadowizardlib.client.KeyBinds;
-import net.mindoth.shadowizardlib.network.PacketSyncClientEffects;
-import net.mindoth.shadowizardlib.network.PacketToggleClientEffects;
-import net.mindoth.shadowizardlib.network.ShadowNetwork;
+import net.mindoth.shadowizardlib.ShadowizardLibClient;
+import net.mindoth.shadowizardlib.network.SyncEnabledListPacket;
+import net.mindoth.shadowizardlib.network.ToggleClientEffectsPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,7 +25,8 @@ import java.util.function.Supplier;
 public class ThanksList {
 
     static Map<UUID, SupporterParticleType> PARTICLES = new HashMap<>();
-    public static final Set<UUID> DISABLED = new HashSet<>();
+    public static final Set<UUID> SERVER_ENABLED = new HashSet<>();
+    public static Set<UUID> ENABLED = new HashSet<>();
 
     public enum SupporterParticleType {
         ASH(() -> ParticleTypes.ASH),
@@ -62,9 +64,7 @@ public class ThanksList {
                     String s;
                     while ( (s = reader.readLine()) != null ) {
                         String[] split = s.split(" ", 2);
-                        if (split.length != 2) {
-                            continue;
-                        }
+                        if ( split.length != 2 ) continue;
                         PARTICLES.put(UUID.fromString(split[0]), SupporterParticleType.valueOf(split[1]));
                     }
                 }
@@ -76,23 +76,25 @@ public class ThanksList {
                 //Not possible
             }
             if ( !PARTICLES.isEmpty() ) {
-                MinecraftForge.EVENT_BUS.addListener(ThanksList::clientTick);
-                MinecraftForge.EVENT_BUS.addListener(ThanksList::onClientJoin);
+                NeoForge.EVENT_BUS.addListener(ThanksList::clientTick);
+                NeoForge.EVENT_BUS.addListener(ThanksList::onClientJoin);
             }
         }, "ShadowizardLib Supporter Effect Loader").start();
     }
 
     public static void onClientJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        UUID id = event.getEntity().getUUID();
-        if ( PARTICLES.get(id) != null ) ShadowNetwork.sendToAll(new PacketSyncClientEffects(0, id));
+        if ( event.getEntity() instanceof ServerPlayer player ) {
+            SERVER_ENABLED.remove(player.getUUID());
+            PacketDistributor.sendToAllPlayers(new SyncEnabledListPacket(SERVER_ENABLED));
+        }
     }
 
-    public static void clientTick(TickEvent.ClientTickEvent event) {
-        if ( KeyBinds.TOGGLE.consumeClick() ) ShadowNetwork.sendToServer(new PacketToggleClientEffects());
+    public static void clientTick(ClientTickEvent.Post event) {
+        if ( ShadowizardLibClient.ClientModBusEvents.TOGGLE.consumeClick() ) PacketDistributor.sendToServer(new ToggleClientEffectsPacket());
         SupporterParticleType t = null;
-        if ( event.phase == TickEvent.Phase.END && Minecraft.getInstance().level != null ) {
+        if ( Minecraft.getInstance().level != null ) {
             for ( Player player : Minecraft.getInstance().level.players() ) {
-                if ( !player.isInvisible() && player.tickCount * 3 % 2 == 0 && !DISABLED.contains(player.getUUID()) && (t = PARTICLES.get(player.getUUID())) != null ) {
+                if ( !player.isInvisible() && player.tickCount * 3 % 2 == 0 && ENABLED.contains(player.getUUID()) && (t = PARTICLES.get(player.getUUID())) != null ) {
                     ClientLevel world = (ClientLevel)player.level();
                     RandomSource rand = world.random;
                     ParticleOptions type = t.type.get();

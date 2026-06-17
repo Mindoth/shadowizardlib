@@ -1,14 +1,15 @@
 package net.mindoth.shadowizardlib.event;
 
 import net.mindoth.shadowizardlib.client.particle.ember.ParticleColor;
-import net.mindoth.shadowizardlib.network.PacketSendCustomParticles;
-import net.mindoth.shadowizardlib.network.ShadowNetwork;
+import net.mindoth.shadowizardlib.network.SendCustomParticlesPacket;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -41,8 +42,10 @@ public class LightEvents {
 
     public static void generateParticles(Vec3 pos, Vec3 center, Level level, float size, int age, double vecX, double vecY, double vecZ, HashMap<String, Float> stats) {
         ParticleColor.IntWrapper color = new ParticleColor.IntWrapper(getParticleColor(stats));
-        ShadowNetwork.sendToNearby(new PacketSendCustomParticles(color.r, color.g, color.b, size, age, false, getParticleType(stats),
-                pos.x, pos.y, pos.z, vecX, vecY, vecZ), level, center);
+        if ( level instanceof ServerLevel serverLevel ) {
+            PacketDistributor.sendToPlayersNear(serverLevel, null, center.x, center.y, center.z, 64,
+                    new SendCustomParticlesPacket(color.r, color.g, color.b, size, age, false, getParticleType(stats), pos.x, pos.y, pos.z, vecX, vecY, vecZ));
+        }
     }
 
     public static void summonParticleLine(Vec3 startPos, Vec3 endPos, int amount, Vec3 center, Level level, float size, int age, HashMap<String, Float> stats) {
@@ -82,8 +85,9 @@ public class LightEvents {
             double randZ = minZ + (maxZ - minZ) * new Random().nextDouble();
             Vec3 pos = new Vec3(randX, randY, randZ);
             ParticleColor.IntWrapper color = new ParticleColor.IntWrapper(getParticleColor(stats));
-            ShadowNetwork.sendToPlayersTrackingEntity(new PacketSendCustomParticles(color.r, color.g, color.b, size, age, false, getParticleType(stats),
-                    pos.x, pos.y, pos.z, vecX, vecY, vecZ), target, true);
+
+            PacketDistributor.sendToPlayersTrackingEntity(target, new SendCustomParticlesPacket(color.r, color.g, color.b, size, age, false, getParticleType(stats),
+                    pos.x, pos.y, pos.z, vecX, vecY, vecZ));
         }
         for ( int i = 0; i < 4; i++ ) {
             double vecY = minVecY + (maxVecY - minVecY) * new Random().nextDouble();
@@ -93,8 +97,8 @@ public class LightEvents {
             double randZ = minZ + (maxZ - minZ) * new Random().nextDouble();
             Vec3 pos = new Vec3(randX, randY, randZ);
             ParticleColor.IntWrapper color = new ParticleColor.IntWrapper(getParticleColor(stats));
-            ShadowNetwork.sendToPlayersTrackingEntity(new PacketSendCustomParticles(color.r, color.g, color.b, size, age, false, getParticleType(stats),
-                    pos.x, pos.y, pos.z, vecX, vecY, vecZ), target, true);
+            PacketDistributor.sendToPlayersTrackingEntity(target, new SendCustomParticlesPacket(color.r, color.g, color.b, size, age, false, getParticleType(stats),
+                    pos.x, pos.y, pos.z, vecX, vecY, vecZ));
         }
         for ( int i = 0; i < 4; i++ ) {
             double vecY = minVecY + (maxVecY - minVecY) * new Random().nextDouble();
@@ -104,8 +108,8 @@ public class LightEvents {
             double randZ = minZ;
             Vec3 pos = new Vec3(randX, randY, randZ);
             ParticleColor.IntWrapper color = new ParticleColor.IntWrapper(getParticleColor(stats));
-            ShadowNetwork.sendToPlayersTrackingEntity(new PacketSendCustomParticles(color.r, color.g, color.b, size, age, false, getParticleType(stats),
-                    pos.x, pos.y, pos.z, vecX, vecY, vecZ), target, true);
+            PacketDistributor.sendToPlayersTrackingEntity(target, new SendCustomParticlesPacket(color.r, color.g, color.b, size, age, false, getParticleType(stats),
+                    pos.x, pos.y, pos.z, vecX, vecY, vecZ));
         }
         for ( int i = 0; i < 4; i++ ) {
             double vecY = minVecY + (maxVecY - minVecY) * new Random().nextDouble();
@@ -115,8 +119,8 @@ public class LightEvents {
             double randZ = maxZ;
             Vec3 pos = new Vec3(randX, randY, randZ);
             ParticleColor.IntWrapper color = new ParticleColor.IntWrapper(getParticleColor(stats));
-            ShadowNetwork.sendToPlayersTrackingEntity(new PacketSendCustomParticles(color.r, color.g, color.b, size, age, false, getParticleType(stats),
-                    pos.x, pos.y, pos.z, vecX, vecY, vecZ), target, true);
+            PacketDistributor.sendToPlayersTrackingEntity(target, new SendCustomParticlesPacket(color.r, color.g, color.b, size, age, false, getParticleType(stats),
+                    pos.x, pos.y, pos.z, vecX, vecY, vecZ));
         }
     }
 
