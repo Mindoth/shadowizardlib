@@ -8,13 +8,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SendCustomParticlesPacket implements CustomPacketPayload {
 
     public static final Type<SendCustomParticlesPacket> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "send_custom_particles"));
+            new Type<>(Identifier.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "send_custom_particles"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SendCustomParticlesPacket> STREAM_CODEC =
             CustomPacketPayload.codec(SendCustomParticlesPacket::encode, SendCustomParticlesPacket::new);

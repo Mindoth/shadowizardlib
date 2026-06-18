@@ -206,21 +206,21 @@ public class ShadowEvents {
             if ( stopsAtEntity && target != null ) {
                 if ( centerBlock ) {
                     BlockPos pos = target.blockPosition();
-                    returnPoint = pos.getCenter();
+                    returnPoint = Vec3.atCenterOf(pos);
                 }
                 break;
             }
             if ( stopsAtLiquid && level.getBlockState(new BlockPos(Mth.floor(lineX), Mth.floor(lineY), Mth.floor(lineZ))).getBlock() instanceof LiquidBlock ) {
                 if ( centerBlock ) {
                     BlockPos pos = new BlockPos(Mth.floor(returnPoint.x), Mth.floor(returnPoint.y), Mth.floor(returnPoint.z));
-                    returnPoint = pos.getCenter();
+                    returnPoint = Vec3.atCenterOf(pos);
                 }
                 break;
             }
             if ( stopsAtSolid && level.getBlockState(new BlockPos(Mth.floor(lineX), Mth.floor(lineY), Mth.floor(lineZ))).isSolid() ) {
                 if ( centerBlock ) {
                     BlockPos pos = new BlockPos(Mth.floor(returnPoint.x), Mth.floor(returnPoint.y), Mth.floor(returnPoint.z));
-                    returnPoint = pos.getCenter();
+                    returnPoint = Vec3.atCenterOf(pos);
                 }
                 break;
             }
@@ -259,21 +259,21 @@ public class ShadowEvents {
             if ( stopsAtEntity && target != null ) {
                 if ( centerBlock ) {
                     BlockPos pos = target.blockPosition();
-                    returnPoint = pos.getCenter();
+                    returnPoint = Vec3.atCenterOf(pos);
                 }
                 break;
             }
             if ( stopsAtLiquid && level.getBlockState(new BlockPos(Mth.floor(lineX), Mth.floor(lineY), Mth.floor(lineZ))).getBlock() instanceof LiquidBlock) {
                 if ( centerBlock ) {
                     BlockPos pos = new BlockPos(Mth.floor(returnPoint.x), Mth.floor(returnPoint.y), Mth.floor(returnPoint.z));
-                    returnPoint = pos.getCenter();
+                    returnPoint = Vec3.atCenterOf(pos);
                 }
                 break;
             }
             if ( stopsAtSolid && level.getBlockState(new BlockPos(Mth.floor(lineX), Mth.floor(lineY), Mth.floor(lineZ))).isSolid() ) {
                 if ( centerBlock ) {
                     BlockPos pos = new BlockPos(Mth.floor(returnPoint.x), Mth.floor(returnPoint.y), Mth.floor(returnPoint.z));
-                    returnPoint = pos.getCenter();
+                    returnPoint = Vec3.atCenterOf(pos);
                 }
                 break;
             }

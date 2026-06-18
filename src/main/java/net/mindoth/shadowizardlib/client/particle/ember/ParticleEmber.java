@@ -71,7 +71,7 @@ public class ParticleEmber extends SingleQuadParticle {
 
 
     @Override
-    public int getLightColor(float pTicks){
+    public int getLightCoords(float pTicks){
         return 255;
     }
 

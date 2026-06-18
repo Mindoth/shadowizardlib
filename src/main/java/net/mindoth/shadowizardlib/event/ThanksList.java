@@ -1,8 +1,10 @@
 package net.mindoth.shadowizardlib.event;
 
 import net.mindoth.shadowizardlib.ShadowizardLibClient;
+import net.mindoth.shadowizardlib.client.particle.ember.EmberParticleProvider;
 import net.mindoth.shadowizardlib.network.SyncEnabledListPacket;
 import net.mindoth.shadowizardlib.network.ToggleClientEffectsPacket;
+import net.mindoth.shadowizardlib.registries.ModParticles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleOptions;
@@ -97,11 +99,13 @@ public class ThanksList {
         SupporterParticleType t = null;
         if ( Minecraft.getInstance().level != null ) {
             for ( Player player : Minecraft.getInstance().level.players() ) {
-                if ( !player.isInvisible() && player.tickCount * 3 % 2 == 0 && ENABLED.contains(player.getUUID()) && (t = PARTICLES.get(player.getUUID())) != null ) {
-                    ClientLevel world = (ClientLevel)player.level();
-                    RandomSource rand = world.random;
-                    ParticleOptions type = t.type.get();
-                    world.addParticle(type, player.getX() + rand.nextDouble() * 0.4 - 0.2, player.getY() + 0.1, player.getZ() + rand.nextDouble() * 0.4 - 0.2, 0, 0, 0);
+                if ( !player.isInvisible() && player.tickCount * 3 % 2 == 0 && ENABLED.contains(player.getUUID()) ) {
+                    if ( (t = PARTICLES.get(player.getUUID())) != null ) {
+                        ClientLevel world = (ClientLevel)player.level();
+                        RandomSource rand = world.getRandom();
+                        ParticleOptions type = t.type.get();
+                        world.addParticle(type, player.getX() + rand.nextDouble() * 0.4 - 0.2, player.getY() + 0.1, player.getZ() + rand.nextDouble() * 0.4 - 0.2, 0, 0, 0);
+                    }
                 }
             }
         }

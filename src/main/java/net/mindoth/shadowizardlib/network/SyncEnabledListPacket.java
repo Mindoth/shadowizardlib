@@ -6,7 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.HashSet;
@@ -15,8 +15,8 @@ import java.util.UUID;
 
 public class SyncEnabledListPacket implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<SyncEnabledListPacket> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "sync_enabled_list"));
+    public static final Type<SyncEnabledListPacket> TYPE =
+            new Type<>(Identifier.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "sync_enabled_list"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncEnabledListPacket> STREAM_CODEC =
             CustomPacketPayload.codec(SyncEnabledListPacket::encode, SyncEnabledListPacket::new);
@@ -47,7 +47,7 @@ public class SyncEnabledListPacket implements CustomPacketPayload {
     }
 
     @Override
-    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+    public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 }

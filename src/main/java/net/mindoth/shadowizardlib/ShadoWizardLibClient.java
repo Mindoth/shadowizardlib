@@ -2,7 +2,7 @@ package net.mindoth.shadowizardlib;
 
 import net.mindoth.shadowizardlib.event.ThanksList;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -30,7 +30,7 @@ public class ShadowizardLibClient {
 
         public static final String KEY_TOGGLE = "key.shadowizardlib.toggle";
         public static final KeyMapping.Category KEY_CATEGORY_SHADOWIZARDLIB =
-                new KeyMapping.Category(ResourceLocation.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "shadowizardlib"));
+                new KeyMapping.Category(Identifier.fromNamespaceAndPath(ShadowizardLib.MOD_ID, "shadowizardlib"));
         public static final KeyMapping TOGGLE = new KeyMapping(KEY_TOGGLE, GLFW.GLFW_KEY_I, KEY_CATEGORY_SHADOWIZARDLIB);
 
         @SubscribeEvent
