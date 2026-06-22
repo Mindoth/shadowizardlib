@@ -106,6 +106,14 @@ public class ThanksList {
                         ParticleOptions type = t.type.get();
                         world.addParticle(type, player.getX() + rand.nextDouble() * 0.4 - 0.2, player.getY() + 0.1, player.getZ() + rand.nextDouble() * 0.4 - 0.2, 0, 0, 0);
                     }
+                    /*
+                    else {
+                        ClientLevel world = (ClientLevel)player.level();
+                        RandomSource rand = world.getRandom();
+                        ParticleOptions type = EmberParticleProvider.createData(LightEvents.getParticleColor(LightEvents.defaultStats()), 0.4F, 8, false, LightEvents.getParticleType(LightEvents.defaultStats()));
+                        world.addParticle(type, player.getX() + rand.nextDouble() * 0.4 - 0.2, player.getY() + 0.1, player.getZ() + rand.nextDouble() * 0.4 - 0.2, 0, 0, 0);
+                    }
+                    */
                 }
             }
         }
