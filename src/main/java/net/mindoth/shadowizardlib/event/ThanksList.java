@@ -12,6 +12,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.NeoForge;
@@ -106,16 +107,28 @@ public class ThanksList {
                         ParticleOptions type = t.type.get();
                         world.addParticle(type, player.getX() + rand.nextDouble() * 0.4 - 0.2, player.getY() + 0.1, player.getZ() + rand.nextDouble() * 0.4 - 0.2, 0, 0, 0);
                     }
-                    /*
-                    else {
-                        ClientLevel world = (ClientLevel)player.level();
-                        RandomSource rand = world.getRandom();
-                        ParticleOptions type = EmberParticleProvider.createData(LightEvents.getParticleColor(LightEvents.defaultStats()), 0.4F, 8, false, LightEvents.getParticleType(LightEvents.defaultStats()));
-                        world.addParticle(type, player.getX() + rand.nextDouble() * 0.4 - 0.2, player.getY() + 0.1, player.getZ() + rand.nextDouble() * 0.4 - 0.2, 0, 0, 0);
-                    }
-                    */
+                    else particleTest((ClientLevel)player.level(), player);
                 }
             }
+        }
+    }
+
+    private static void particleTest(ClientLevel world, Player player) {
+        Vec3 pos = player.position();
+        Vec3 vec3 = player.getDeltaMovement();
+        double d5 = vec3.x;
+        double d6 = vec3.y;
+        double d1 = vec3.z;
+        double speed = 0.1D;
+        for ( int j = 0; j < 4; j++ ) {
+            double variable = 1.0D;
+            double vecX = new Random().nextDouble(variable - -variable) + -variable;
+            double vecY = new Random().nextDouble(variable - -variable) + -variable;
+            double vecZ = new Random().nextDouble(variable - -variable) + -variable;
+            float particleSize = 0.25F;
+            int life = 1 + new Random().nextInt(11);
+            world.addParticle(EmberParticleProvider.createData(LightEvents.getParticleColor(LightEvents.defaultStats()), particleSize, life, true, LightEvents.getParticleType(LightEvents.defaultStats())),
+                    true, true, pos.x, pos.y, pos.z, vecX * speed, vecY * speed, vecZ * speed);
         }
     }
 }

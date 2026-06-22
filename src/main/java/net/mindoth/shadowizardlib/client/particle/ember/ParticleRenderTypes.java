@@ -16,7 +16,7 @@ public class ParticleRenderTypes {
     public static final RenderPipeline GLOW_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET)
                     .withLocation("pipeline/shadowizardlib_glow")
-                    .withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN_OR_EQUAL, true))
+                    .withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN, false))
                     .withColorTargetState(new ColorTargetState(GLOW_BLEND))
                     .build()
     );
@@ -27,7 +27,7 @@ public class ParticleRenderTypes {
     public static final RenderPipeline NO_ALPHA_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET)
                     .withLocation("pipeline/shadowizardlib_no_alpha")
-                    .withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN_OR_EQUAL, true))
+                    .withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN, false))
                     .withColorTargetState(new ColorTargetState(NO_ALPHA_BLEND))
                     .build()
     );
@@ -38,7 +38,7 @@ public class ParticleRenderTypes {
     public static final RenderPipeline FLAT_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET)
                     .withLocation("pipeline/shadowizardlib_no_alpha")
-                    .withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN_OR_EQUAL, true))
+                    .withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN, false))
                     .withColorTargetState(new ColorTargetState(FLAT_BLEND))
                     .build()
     );
