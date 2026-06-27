@@ -86,7 +86,7 @@ public class LightEvents {
             Vec3 pos = new Vec3(randX, randY, randZ);
             ParticleColor.IntWrapper color = new ParticleColor.IntWrapper(getParticleColor(stats));
 
-            PacketDistributor.sendToPlayersTrackingEntity(target, new SendCustomParticlesPacket(color.r, color.g, color.b, size, age, false, getParticleType(stats),
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SendCustomParticlesPacket(color.r, color.g, color.b, size, age, false, getParticleType(stats),
                     pos.x, pos.y, pos.z, vecX, vecY, vecZ));
         }
         for ( int i = 0; i < 4; i++ ) {
@@ -97,7 +97,7 @@ public class LightEvents {
             double randZ = minZ + (maxZ - minZ) * new Random().nextDouble();
             Vec3 pos = new Vec3(randX, randY, randZ);
             ParticleColor.IntWrapper color = new ParticleColor.IntWrapper(getParticleColor(stats));
-            PacketDistributor.sendToPlayersTrackingEntity(target, new SendCustomParticlesPacket(color.r, color.g, color.b, size, age, false, getParticleType(stats),
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SendCustomParticlesPacket(color.r, color.g, color.b, size, age, false, getParticleType(stats),
                     pos.x, pos.y, pos.z, vecX, vecY, vecZ));
         }
         for ( int i = 0; i < 4; i++ ) {
@@ -108,7 +108,7 @@ public class LightEvents {
             double randZ = minZ;
             Vec3 pos = new Vec3(randX, randY, randZ);
             ParticleColor.IntWrapper color = new ParticleColor.IntWrapper(getParticleColor(stats));
-            PacketDistributor.sendToPlayersTrackingEntity(target, new SendCustomParticlesPacket(color.r, color.g, color.b, size, age, false, getParticleType(stats),
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SendCustomParticlesPacket(color.r, color.g, color.b, size, age, false, getParticleType(stats),
                     pos.x, pos.y, pos.z, vecX, vecY, vecZ));
         }
         for ( int i = 0; i < 4; i++ ) {
@@ -119,7 +119,7 @@ public class LightEvents {
             double randZ = maxZ;
             Vec3 pos = new Vec3(randX, randY, randZ);
             ParticleColor.IntWrapper color = new ParticleColor.IntWrapper(getParticleColor(stats));
-            PacketDistributor.sendToPlayersTrackingEntity(target, new SendCustomParticlesPacket(color.r, color.g, color.b, size, age, false, getParticleType(stats),
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SendCustomParticlesPacket(color.r, color.g, color.b, size, age, false, getParticleType(stats),
                     pos.x, pos.y, pos.z, vecX, vecY, vecZ));
         }
     }
